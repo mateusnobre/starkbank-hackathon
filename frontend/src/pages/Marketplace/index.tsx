@@ -13,7 +13,7 @@ const Bkgdiv = styled.div`
     background-color: var(--color-bkg-soft);
 `;
 
-const Menu = styled.div`
+const Menumkt = styled.div`
     position: fixed;
     display: flex;
     flex-direction: column;
@@ -98,7 +98,7 @@ export default function Marketplace() {
 
     return (
         <Bkgdiv>
-            <Menu>
+            <Menumkt>
                 <Starkimg src={StarkLogo} alt="Logo StarkBank"/>
                 <div><span>Marketplace</span></div>
                 <div>Extrato</div>
@@ -109,7 +109,7 @@ export default function Marketplace() {
                 <div>Cartão Corporativo</div>
                 <div>Consultas</div>
                 <div>Pagamentos</div>
-            </Menu>
+            </Menumkt>
             <Appbox onClick={() => history('/dashboard')}>
                 <Appimg src={DivPix} alt='Pix Parcelado'/>
                 <Apptext>
