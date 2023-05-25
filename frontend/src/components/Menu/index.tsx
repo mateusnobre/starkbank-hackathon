@@ -15,6 +15,23 @@ const Menudiv = styled.div`
     background: linear-gradient(var(--color-pix), var(--color-pix-6));
 `;
 
+const Piximg = styled.img`
+    margin-top: 4vh;
+    margin-bottom: 4vh;
+    margin-left: 2.5vw;
+    width: 16%;
+    cursor: pointer;
+`;
+
+const Arrow = styled.img<{rotate: boolean}>`
+    margin-left: .7vw;
+    position: fixed;
+    height: 1.8vh;
+    width: auto;
+    transform: ${props => props.rotate ? "rotate(90deg)" :"rotate(0deg)"};
+    transition: transform 0.5s;
+`;
+
 const Option = styled.div`
     display: flex;
     flex-direction: row;
@@ -30,6 +47,7 @@ const Option = styled.div`
     :hover {
         cursor: pointer;
         color: var(--color-bkg-inv-hard);
+        background: var(--color-pix-dark);
         transition: 0.2s;
     }
 
@@ -38,16 +56,10 @@ const Option = styled.div`
     }
 `;
 
-const OptionSelect = styled(Option)`
+const OptionSelect = styled(Option)<{selected: boolean}>`
 
     padding-left: 0;
-
-    img {
-        margin-left: .7vw;
-        position: fixed;
-        height: 1.8vh;
-        width: auto;
-    }
+    color: ${props => props.selected ? "var(--color-bkg-inv-hard)" :"var(--color-bkg-hard)"};
 
     p {
         padding-left: 2.5vw;
@@ -57,6 +69,7 @@ const OptionSelect = styled(Option)`
 const OptionNested = styled(Option)`
 
     transition: 0.5s;
+    padding-left: 3vw;
 
     :hover {
         cursor: pointer;
@@ -66,20 +79,11 @@ const OptionNested = styled(Option)`
     }
 `;
 
-const Starkimg = styled.img`
-    margin-top: 4vh;
-    margin-bottom: 4vh;
-    margin-left: 2.5vw;
-    width: 16%;
-    cursor: pointer;
-`;
-
 export default function Menu() {
 
     const history = useNavigate();
 
     const [showOptionsPP, setShowOptionsPP] = useState(false);
-
     
     const handleClick = () => {
         if (!showOptionsPP) {
@@ -92,10 +96,11 @@ export default function Menu() {
 
     return (
         <Menudiv>
-            <Starkimg src={DivPix} alt="Logo StarkBank"/>
+            <Piximg src={DivPix} alt="Logo StarkBank"/>
             <OptionSelect onClick={handleClick}
+                          selected={showOptionsPP}
             >
-                <img src={ArrowLeft} />
+                <Arrow src={ArrowLeft} rotate={showOptionsPP}/>
                 <p>Pix Parcelado</p>
             </OptionSelect>
             {showOptionsPP && (

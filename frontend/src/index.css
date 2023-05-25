@@ -16,6 +16,8 @@ code {
   --color-stark: #0070e0;
   --color-pix: #0bffb7;
   --color-pix-6: rgb(11, 255, 183, 0.6);
+  --color-pix-6: rgb(11, 255, 183, 0.2);
+  --color-pix-dark: #17f8b5;
   --color-bkg-soft: #171B20;
   --color-bkg-hard: #111418;
   --color-bkg-inv-soft: #f5f5f5;
