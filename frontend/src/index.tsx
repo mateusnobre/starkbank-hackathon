@@ -7,16 +7,27 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
-import App from './App';
 import reportWebVitals from './reportWebVitals';
+import Marketplace from './pages/Marketplace';
+import Checkout from './pages/Checkout';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: "/dashboard",
     element: <Dashboard />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/",
+    element: <Marketplace />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/checkout",
+    element: <Checkout />,
     errorElement: <ErrorPage />,
   },
 ]);
