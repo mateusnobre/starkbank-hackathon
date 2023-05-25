@@ -22,4 +22,8 @@ code {
   --color-bkg-hard: #111418;
   --color-bkg-inv-soft: #f5f5f5;
   --color-bkg-inv-hard: #ffffff;
+
+  --fontsize-title: 1.25rem;
+  --fontsize: 1rem;
+  --fontsize-name: 0.75rem;
 }

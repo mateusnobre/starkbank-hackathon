@@ -110,8 +110,8 @@ export default function Menu() {
                     <OptionNested>Integrações</OptionNested>
                 </div>
             )}
-            <Option>Recebimentos</Option>
-            <Option>Pagamentos</Option>
+            <Option onClick={() => history('/checkout')}>Recebimentos</Option>
+            <Option onClick={() => history('/checkout')}>Pagamentos</Option>
         </Menudiv>
     );
 }
