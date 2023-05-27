@@ -19,7 +19,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install black ruff pytest
-          if [ -f backend/requirements.txt ]; then pip install -r backend/requirements.txt; fi
       - name: Reformat with black
         run: |
           black .
@@ -31,12 +30,13 @@ jobs:
         run: |
           # stop the build if there are Python syntax errors or undefined names
           cd backend
-          echo ${{ env.API_PASSWORD }}
-          echo ${{ env.SUPABASE_KEY }}
-          echo ${{ env.SUPABASE_URL }}
-          export API_PASSWORD=${{ env.API_PASSWORD }}
-          export SUPABASE_KEY=${{ env.SUPABASE_KEY }}
-          export SUPABASE_URL=${{ env.SUPABASE_URL }}
+          echo $API_PASSWORD
+          echo $SUPABASE_KEY
+          echo $SUPABASE_URL
+          export API_PASSWORD=$API_PASSWORD
+          export SUPABASE_KEY=$SUPABASE_KEY
+          export SUPABASE_URL=$SUPABASE_URL
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           pytest
         env: API_PASSWORD=${{ env.API_PASSWORD }}
           SUPABASE_KEY=${{ env.SUPABASE_KEY }}
