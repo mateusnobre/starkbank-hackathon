@@ -72,6 +72,18 @@ def get_credit_score(final_user_id, final_user_document):
     score = np.random.randint(300, 1000)
     return score
 
+@app.route("/api/pix-creation-callback", methods=["POST"])
+def pix_creation_callback():
+    data = request.get_json()
+    print(data)
+    return jsonify({"message": "Callback received.", "data": data}), 200
+
+
+@app.route("/api/pix-reversion-callback", methods=["POST"])
+def pix_reversion_callback():
+    data = request.get_json()
+    print(data)
+    return jsonify({"message": "Callback received.", "data": data}), 200
 
 @app.route("/api/get-payment-options", methods=["POST"])
 @authenticate
