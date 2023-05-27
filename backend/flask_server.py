@@ -4,11 +4,26 @@ from functools import wraps
 from dotenv import load_dotenv
 import starkinfra
 import numpy as np
+import uuid
+import starkinfra
+import starkbank
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 load_dotenv()
 
 API_PASSWORD = os.getenv("API_PASSWORD")
 app = Flask(__name__)
+private_key_content = os.getenv("PRIVATE_KEY")
+
+#get data from .pem file private key
+
+
+project = starkbank.Project(
+    environment="sandbox", id="6142453941796864", private_key=private_key_content
+)
+
+starkbank.user = project
 
 # Define credit score ranges and corresponding interest rate ranges
 CREDIT_SCORE_RANGES = {
@@ -212,6 +227,62 @@ def process_payment():
     # Your payment processing logic goes here
 
     return jsonify({"message": "Payment processed successfully."}), 200
+
+@app.route("/api/create-payment", methods=["POST"])
+@authenticate
+def create_payment():
+    try:
+        data = request.get_json()
+        final_user_id = data.get("final_user_id")
+        purchase_amount = data.get("purchase_amount")
+        number_splits = data.get("number_splits")
+        down_payment = data.get("down_payment")
+        interest_rate = data.get("interest_rate")
+        monthly_payment = data.get("monthly_payment")
+        
+        if final_user_id is None or purchase_amount is None or number_splits is None:
+            return jsonify({"error": "Missing required fields."}), 400
+        
+        if interest_rate is not None and monthly_payment is not  None:
+            return jsonify({"error": "You must choose only one method"}), 400
+        
+        if type(number_splits) != int or number_splits < 0:
+            return jsonify({"error": "Invalid number of splits."}), 400
+
+        future_payment = purchase_amount - down_payment
+        
+        #if future payment is not numeric or is negative return 400
+        if not isinstance(future_payment, (int, float)) or future_payment < 0:
+            return jsonify({"error": "Invalid future payment."}), 400
+
+        if monthly_payment is not None and monthly_payment * number_splits != future_payment:
+            return jsonify({"error": "Invalid monthly payment."}), 400
+        
+        if interest_rate is not None:
+            monthly_payment = (future_payment / number_splits) * (1 + interest_rate) ** number_splits
+        
+        due_dates = [datetime.now() + relativedelta(months=i) for i in range(1, number_splits + 1)]
+    
+        due_dates = [date.strftime("%d/%m/%Y") for date in due_dates]
+                           
+
+        unique_id = str(uuid.uuid4())
+        print(unique_id)
+        brcodes = starkbank.dynamicbrcode.create([
+            starkbank.DynamicBrcode(
+                amount=4000,
+                expiration=123456789,
+                tags=['New sword', 'DynamicBrcode #1234']
+            )
+        ])
+        print(brcodes)
+        return jsonify({"message": "Payment created successfully.", "brcodes": brcodes}), 200
+    except Exception as e:
+        print(e)
+        return jsonify({"error": "Error creating payment."}), 500
+
+
+
 
 
 if __name__ == "__main__":
