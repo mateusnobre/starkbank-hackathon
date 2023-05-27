@@ -2,7 +2,6 @@ from flask import request
 from utils import authenticate, check_required_columns
 from app import app as app
 from app import supabase as supabase
-import jwt
 
 @app.route("/api/clients", methods=["POST"])
 @authenticate
