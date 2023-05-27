@@ -37,7 +37,7 @@ def create_split_payment():
 
     try:
         result = supabase.table("SplitPayments").insert(data).execute()
-        if result.error:
+        if not result:
             return "Failed to create split payment.", 500
         return "Split payment created successfully.", 201
     except Exception as e:
@@ -59,7 +59,7 @@ def get_single_split_payment(id):
     """
     try:
         result = supabase.table("SplitPayments").select("*").eq("id", id).execute()
-        if result.error:
+        if not result:
             return "Failed to retrieve split payment.", 500
         if len(result.data) == 0:
             return "Split payment not found.", 404
@@ -83,7 +83,7 @@ def delete_single_split_payment(id):
     """
     try:
         result = supabase.table("SplitPayments").delete().eq("id", id).execute()
-        if result.error:
+        if not result:
             return "Failed to delete split payment.", 500
         if result.count == 0:
             return "Split payment not found.", 404
@@ -128,7 +128,7 @@ def update_single_split_payment(id):
 
     try:
         result = supabase.table("SplitPayments").update(data).eq("id", id).execute()
-        if result.error:
+        if not result:
             return "Failed to update split payment.", 500
         if result.count == 0:
             return "Split payment not found.", 404
@@ -148,7 +148,7 @@ def get_all_split_payments():
     """
     try:
         result = supabase.table("SplitPayments").select("*").execute()
-        if result.error:
+        if not result:
             return "Failed to retrieve split payments.", 500
         return result.data
     except Exception as e:
@@ -169,7 +169,7 @@ def get_split_payments_by_due_date(due_date):
     """
     try:
         result = supabase.table("SplitPayments").select("*").eq("due_date", due_date).execute()
-        if result.error:
+        if not result:
             return "Failed to retrieve split payments by due date.", 500
         return result.data
     except Exception as e:

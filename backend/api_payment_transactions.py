@@ -36,7 +36,7 @@ def create_payment_transaction():
 
     try:
         result = supabase.table("PaymentTransactions").insert(data).execute()
-        if result.error:
+        if not result:
             return "Failed to create payment transaction.", 500
         return "Payment transaction created successfully.", 201
     except Exception as e:
@@ -58,7 +58,7 @@ def get_single_payment_transaction(transaction_id):
     """
     try:
         result = supabase.table("PaymentTransactions").select("*").eq("transaction_id", transaction_id).execute()
-        if result.error:
+        if not result:
             return "Failed to retrieve payment transaction.", 500
         if len(result.data) == 0:
             return "Payment transaction not found.", 404
@@ -82,7 +82,7 @@ def delete_single_payment_transaction(transaction_id):
     """
     try:
         result = supabase.table("PaymentTransactions").delete().eq("transaction_id", transaction_id).execute()
-        if result.error:
+        if not result:
             return "Failed to delete payment transaction.", 500
         if result.count == 0:
             return "Payment transaction not found.", 404
@@ -125,7 +125,7 @@ def update_single_payment_transaction(transaction_id):
 
     try:
         result = supabase.table("PaymentTransactions").update(data).eq("transaction_id", transaction_id).execute()
-        if result.error:
+        if not result:
             return "Failed to update payment transaction.", 500
         if result.count == 0:
             return "Payment transaction not found.", 404

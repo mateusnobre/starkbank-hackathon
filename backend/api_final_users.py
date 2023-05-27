@@ -33,7 +33,7 @@ def create_final_user():
 
     try:
         result = supabase.table("FinalUsers").insert(data).execute()
-        if result.error:
+        if not result:
             return "Failed to create final user.", 500
         return "Final user created successfully.", 201
     except Exception as e:
@@ -55,7 +55,7 @@ def get_single_final_user(id):
     """
     try:
         result = supabase.table("FinalUsers").select("*").eq("id", id).execute()
-        if result.error:
+        if not result:
             return "Failed to retrieve final user.", 500
         if len(result.data) == 0:
             return "Final user not found.", 404
@@ -79,7 +79,7 @@ def delete_single_final_user(id):
     """
     try:
         result = supabase.table("FinalUsers").delete().eq("id", id).execute()
-        if result.error:
+        if not result:
             return "Failed to delete final user.", 500
         if result.count == 0:
             return "Final user not found.", 404
