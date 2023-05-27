@@ -30,8 +30,9 @@ jobs:
       - name: test with pytest
         run: |
           # stop the build if there are Python syntax errors or undefined names
+          cd backend
           pytest
           env:
-            API_PASSWORD=$API_PASSWORD
-            SUPABASE_KEY=$SUPABASE_KEY
-            SUPABASE_URL=$SUPABASE_URL
+            API_PASSWORD=${{ env.API_PASSWORD }}
+            SUPABASE_KEY=${{ env.SUPABASE_KEY }}
+            SUPABASE_URL=${{ env.SUPABASE_URL }}
