@@ -56,7 +56,7 @@ def get_single_final_user(id):
     - 500 if there's an error during the retrieval process
     """
     try:
-        result = supabase.table("FinalUsers").select("*").eq("id", id).execute()
+        result = supabase.table("FinalUsers").select("*").eq("final_user_id", id).execute()
         if not result:
             return "Failed to retrieve final user.", 500
         if len(result.data) == 0:
@@ -81,7 +81,7 @@ def delete_single_final_user(id):
     - 500 if there's an error during the deletion process
     """
     try:
-        result = supabase.table("FinalUsers").delete().eq("id", id).execute()
+        result = supabase.table("FinalUsers").delete().eq("final_user_id", id).execute()
         if not result:
             return "Failed to delete final user.", 500
         if result.count == 0:
