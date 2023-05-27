@@ -34,6 +34,9 @@ jobs:
         run: |
           # stop the build if there are Python syntax errors or undefined names
           cd backend
+          echo ${{ env.API_PASSWORD }}
+          echo ${{ env.SUPABASE_KEY }}
+          echo ${{ env.SUPABASE_URL }}
           export API_PASSWORD=${{ env.API_PASSWORD }}
           export SUPABASE_KEY=${{ env.SUPABASE_KEY }}
           export SUPABASE_URL=${{ env.SUPABASE_URL }}
