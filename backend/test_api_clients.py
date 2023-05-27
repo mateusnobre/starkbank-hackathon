@@ -9,7 +9,7 @@ import os
 load_dotenv()
 API_PASSWORD = os.getenv("API_PASSWORD")
 fake = Faker()
-CLIENT_ID = fake.uuid4()
+CLIENT_ID = ""
  # Set the Authorization header
 HEADERS = {
     "Authorization": API_PASSWORD
@@ -22,8 +22,8 @@ def client():
 @pytest.mark.order(1)
 def test_create_client(client):
     # Generate fake client data
+    global CLIENT_ID
     client_data = {
-        "client_id": CLIENT_ID,
         "name": fake.name(),
         "email": fake.email(),
         "role": fake.random_element(["admin", "customer support"]),
@@ -33,10 +33,9 @@ def test_create_client(client):
 
     # Send a POST request to create a new client
     response = client.post("/api/clients", data=json.dumps(client_data), content_type="application/json", headers=HEADERS)
-
+    CLIENT_ID = json.loads(response.data.decode())["client_id"]
     # Check the response status code and data
     assert response.status_code == 201
-    assert response.data.decode() == "Client created successfully."
 
 @pytest.mark.order(2)
 def test_get_single_client(client):
@@ -66,7 +65,6 @@ def test_delete_single_client(client):
 def test_update_single_client(client):
     # Generate fake updated client data
     updated_client_data = {
-        "client_id": CLIENT_ID,  # Replace with actual client ID
         "name": fake.name(),
         "email": fake.email(),
         "role": fake.random_element(["admin", "customer support"]),

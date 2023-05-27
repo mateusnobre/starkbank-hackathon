@@ -2,7 +2,7 @@ from flask import request
 from utils import authenticate, check_required_columns_post, check_required_columns_update
 from app import app as app
 from app import supabase as supabase
-
+from faker import Faker
 
 @app.route("/api/payment_transactions", methods=["POST"])
 @authenticate
@@ -33,9 +33,9 @@ def create_payment_transaction():
     data = request.get_json()
     if not data:
         return "Request body is missing.", 400
+    data["transaction_id"] = Faker().uuid4()
 
     required_columns = [
-        "transaction_id",
         "split_payment_id",
         "amount",
         "status",
@@ -57,7 +57,8 @@ def create_payment_transaction():
         result = supabase.table("PaymentTransactions").insert(data).execute()
         if not result:
             return "Failed to create payment transaction.", 500
-        return "Payment transaction created successfully.", 201
+        return {"transaction_id": data["transaction_id"]}, 201
+
     except Exception as e:
         return str(e), 500
 
@@ -155,7 +156,7 @@ def update_single_payment_transaction(transaction_id):
     if not data:
         return "Request body is missing.", 400
 
-    required_columns = [
+    possible_columns = [
         "split_payment_id",
         "amount",
         "status",
@@ -169,7 +170,7 @@ def update_single_payment_transaction(transaction_id):
         "qt_code_img_link",
         "stark_uuid",
     ]
-    update_columns = check_required_columns_update(data, required_columns)
+    update_columns = check_required_columns_update(data, possible_columns)
     if update_columns:
         return update_columns, 400
 
