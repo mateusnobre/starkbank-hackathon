@@ -10,7 +10,8 @@ const Menudiv = styled.div`
     display: flex;
     flex-direction: column;
 
-    height: 100%;
+    top: 0;
+    height: 100vh;
     width: 15%;
     background: linear-gradient(var(--color-pix), var(--color-pix-6));
 `;
@@ -96,7 +97,7 @@ export default function Menu() {
 
     return (
         <Menudiv>
-            <Piximg src={DivPix} alt="Logo StarkBank"/>
+            <Piximg src={DivPix} alt="Logo StarkBank" onClick={() => history('/dashboard')}/>
             <Option onClick={() => history('/statement')}>Statement</Option>
             <OptionSelect onClick={handleClick}
                           selected={showOptionsPP}
@@ -106,8 +107,8 @@ export default function Menu() {
             </OptionSelect>
             {showOptionsPP && (
                 <div>
-                    <OptionNested>Transactions</OptionNested>
-                    <OptionNested>Installments</OptionNested>
+                    <OptionNested onClick={() => history('/transactions')}>Transactions</OptionNested>
+                    <OptionNested onClick={() => history('/installments')}>Installments</OptionNested>
                     <OptionNested>Accounts Receivable</OptionNested>
                     <OptionNested>Default Rate</OptionNested>
                 </div>

@@ -11,6 +11,8 @@ import reportWebVitals from './reportWebVitals';
 import Marketplace from './pages/Marketplace';
 import Checkout from './pages/Checkout';
 import Statement from './pages/Statement';
+import Transactions from './pages/Transactions';
+import Installments from './pages/Installments';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -35,6 +37,16 @@ const router = createBrowserRouter([
   {
     path: "/statement",
     element: <Statement />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/transactions",
+    element: <Transactions />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/installments",
+    element: <Installments />,
     errorElement: <ErrorPage />,
   },
 ]);

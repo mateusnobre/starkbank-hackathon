@@ -8,8 +8,9 @@ const Bkgdiv = styled.div`
     flex-direction: column;
     justify-content: center;
 
-    height: 100vh;
-    width: 100vw;
+    height: 90vh;
+    padding-top: 5vh;
+    width: 99vw;
 `;
 
 const ScreenDiv = styled.div`
@@ -18,7 +19,7 @@ const ScreenDiv = styled.div`
     align-items: center;
     justify-content: center;
     margin-left: 20%;
-    height: 90%;
+    height: 100%;
     width: 75%;
 `;
 
@@ -38,7 +39,7 @@ const PageTitle = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: center;
-    height: 7.5%;
+    height: 7.5vh;
     width: 100%;
 
     color: var(--color-bkg-hard);
@@ -50,9 +51,9 @@ const BalanceBox = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: center;
-    height: 10%;
-    padding-top: 2.5%;
-    padding-bottom: 2.5%;
+    height: 10vh;
+    padding-top: 2.5vh;
+    padding-bottom: 2.5vh;
     width: 90%;
     margin-right: 10%;
     transition: background 1s;
@@ -105,7 +106,7 @@ const DataTable = styled.div`
     align-items: center;
     justify-content: center;
 
-    height: 100%;
+    height: 90%;
     width: 90%;
     margin-right: 10%;
     color: var(--color-bkg-hard);
@@ -125,7 +126,7 @@ const AddBalance = styled.div`
     align-items: center;
     justify-content: center;
 
-    height: 5%;
+    height: 5vh;
     margin-top: 10vh;
     width: 100%;
 
@@ -153,7 +154,7 @@ const FuncButton = styled.div`
     align-items: center;
     justify-content: center;
 
-    height: 5%;
+    height: 5vh;
     margin-top: 1vh;
     width: 100%;
 
