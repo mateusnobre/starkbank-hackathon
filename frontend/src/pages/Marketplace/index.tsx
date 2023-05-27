@@ -8,8 +8,8 @@ const Bkgdiv = styled.div`
     display: flex;
     flex-direction: column;
 
-    height: 98vh;
-    width: 98vw;
+    height: 99.5vh;
+    width: 99.5vw;
     background-color: var(--color-bkg-soft);
 `;
 
