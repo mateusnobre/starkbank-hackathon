@@ -1,11 +1,21 @@
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify
-from utils import CREDIT_SCORE_RANGES, INTEREST_RATE_RANGES, MINIMUM_AMOUNT, N_INSTALLMENTS, TOTAL_AMOUNT_MAXIMUMS, authenticate, get_credit_score
+from utils import (
+    CREDIT_SCORE_RANGES,
+    INTEREST_RATE_RANGES,
+    MINIMUM_AMOUNT,
+    N_INSTALLMENTS,
+    TOTAL_AMOUNT_MAXIMUMS,
+    authenticate,
+    get_credit_score,
+)
 
 app = Flask(__name__)
 
 import os
 # from supabase import create_client
+from supabase import create_client
+
 load_dotenv()
 
 # Initialize Supabase client
@@ -31,6 +41,7 @@ user = starkbank.Project(
     private_key=private_key_content
 )
 starkbank.user = user
+
 
 
 
@@ -92,25 +103,28 @@ def get_payment_options():
 
     for n_installments in possible_ninstallments:
         monthly_payment_without_interest = financed_amount / n_installments
-        total_payment = 0
+        total_financed_payment = 0
         for months in range(n_installments):
             total_financed_payment += monthly_payment_without_interest * (
                 (1 + base_interest_rate) ** months
             )
-        monthly_payment = round(total_financed_payment / n_installments,2)
+        monthly_payment = round(total_financed_payment / n_installments, 2)
         total_financed_payment = monthly_payment * n_installments
-        interest_rate = (total_financed_payment / financed_amount) ** (1 / n_installments) - 1
+        interest_rate = (total_financed_payment / financed_amount) ** (
+            1 / n_installments
+        ) - 1
         eligible_options.append(
             {
                 "number_splits": n_installments,
                 "interest_rate": interest_rate,
                 "monthly_payment": monthly_payment,
                 "purchase_amount": purchase_amount,
-                "total_amount": total_financed_payment+down_payment
+                "total_amount": total_financed_payment + down_payment,
             }
         )
 
     return jsonify({"eligible_options": eligible_options}), 200
+
 
 @app.route("/api/payments", methods=["POST"])
 @authenticate
@@ -185,17 +199,24 @@ def create_payment():
         if type(number_splits) != int or number_splits < 0:
             return jsonify({"error": "Invalid number of splits."}), 400
 
-        future_payment = purchase_amount - down_payment
+        future_payment = purchase_amount
         
-        #if future payment is not numeric or is negative return 400
+        if down_payment is not None:
+            future_payment -= down_payment
+        
+        if interest_rate is not None:
+            monthly_payment = (future_payment / number_splits) * (1 + interest_rate) ** number_splits
+        
+        future_payment = monthly_payment * number_splits
+        
+        
         if not isinstance(future_payment, (int, float)) or future_payment < 0:
             return jsonify({"error": "Invalid future payment."}), 400
 
         if monthly_payment is not None and monthly_payment * number_splits != future_payment:
             return jsonify({"error": "Invalid monthly payment."}), 400
         
-        if interest_rate is not None:
-            monthly_payment = (future_payment / number_splits) * (1 + interest_rate) ** number_splits
+
         
         due_dates = [datetime.now() + relativedelta(months=i) for i in range(1, number_splits + 1)]
         due_dates_str = [date.strftime("%Y-%m-%d") for date in due_dates]
@@ -235,7 +256,7 @@ def create_payment():
                 "due_dates": due_dates_str[1:] if len(due_dates_str) > 1 else [],
                 "monthly_payment": monthly_payment,
             }), 200
-        
+
         return jsonify({
                 "message": "Payment created successfully",
                 "due_dates": due_dates_str[1:] if len(due_dates_str) > 1 else [],

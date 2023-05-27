@@ -9,7 +9,7 @@ const Bkgdiv = styled.div`
     align-items: center;
 
     height: 100vh;
-    width: 100vw;
+    width: 100%;
 `;
 
 const CartWrapper = styled.div`

@@ -1,7 +1,8 @@
 from flask import request
-from utils import authenticate, check_required_columns
+from utils import authenticate, check_required_columns_post, check_required_columns_update
 from app import app as app
 from app import supabase as supabase
+
 
 @app.route("/api/clients", methods=["POST"])
 @authenticate
@@ -27,7 +28,7 @@ def create_client():
         return "Request body is missing.", 400
 
     required_columns = ["client_id", "name", "email", "role"]
-    missing_columns = check_required_columns(data, required_columns)
+    missing_columns = check_required_columns_post(data, required_columns)
     if missing_columns:
         return missing_columns, 400
 
@@ -38,6 +39,7 @@ def create_client():
         return "Client created successfully.", 201
     except Exception as e:
         return str(e), 500
+
 
 @app.route("/api/clients/<id>", methods=["GET"])
 @authenticate
@@ -63,6 +65,7 @@ def get_single_client(id):
     except Exception as e:
         return str(e), 500
 
+
 @app.route("/api/clients/<id>", methods=["DELETE"])
 @authenticate
 def delete_single_client(id):
@@ -86,6 +89,7 @@ def delete_single_client(id):
         return "Client deleted successfully.", 200
     except Exception as e:
         return str(e), 500
+
 
 @app.route("/api/clients/<id>", methods=["PUT"])
 @authenticate
@@ -115,9 +119,9 @@ def update_single_client(id):
         return "Request body is missing.", 400
 
     required_columns = ["client_id", "name", "email", "role"]
-    missing_columns = check_required_columns(data, required_columns)
-    if missing_columns:
-        return missing_columns, 400
+    update_columns = check_required_columns_update(data, required_columns)
+    if update_columns:
+        return update_columns, 400
 
     try:
         result = supabase.table("Clients").update(data).eq("id", id).execute()
@@ -128,4 +132,3 @@ def update_single_client(id):
         return "Client updated successfully.", 200
     except Exception as e:
         return str(e), 500
-
