@@ -1,12 +1,14 @@
 import styled from 'styled-components';
 import React, { useState } from 'react';
 import Menu from '../../components/Menu';
+import CashflowChart from '../../components/CashflowChart';
+import InstallmentsChart from '../../components/InstallmentsChart';
 
 const Bkgdiv = styled.div`
     display: flex;
     flex-direction: column;
 
-    height: 200vh;
+    height: 300vh;
     padding-top: 5vh;
     width: 99vw;
 `;
@@ -14,8 +16,6 @@ const Bkgdiv = styled.div`
 const ScreenDiv = styled.div`
     display: flex;
     flex-direction: row;
-    align-items: center;
-    justify-content: center;
     margin-left: 20%;
     height: 100%;
     width: 75%;
@@ -53,8 +53,8 @@ const FiltersBar = styled.div`
     margin-top: 2vh;
     padding-top: 1vh;
     padding-bottom: 1vh;
-    width: 90%;
-    margin-right: 10%;
+    width: 95%;
+    margin-right: 5%;
 
     color: var(--color-bkg-hard);
     transition: background 1s;
@@ -79,8 +79,8 @@ const InfoBar = styled.div`
     justify-content: space-between;
     height: 15vh;
     margin-top: 2vh;
-    width: 90%;
-    margin-right: 10%;
+    width: 95%;
+    margin-right: 5%;
 `;
 
 const InfoBox = styled.div`
@@ -131,8 +131,8 @@ const DataBox = styled.div`
     display: flex;
     flex-direction: column;
 
-    height: 75%;
-    margin-top: 2.5%;
+    height: 600px;
+    margin-top: 30px;
     width: 100%;
 
     color: var(--color-bkg-hard);
@@ -142,6 +142,7 @@ const DataBox = styled.div`
         line-height: calc(var(--fontsize) * 2);
         font-size: var(--fontsize);
         font-weight: 400;
+        margin-bottom: 2.5vh;
     }
 `;
 
@@ -151,18 +152,10 @@ const DataChart = styled.div`
     align-items: center;
     justify-content: center;
 
-    height: 400px;
-    width: 90%;
-    margin-right: 10%;
+    height: 100%;
+    width: 95%;
+    margin-right: 5%;
     color: var(--color-bkg-hard);
-    background: purple;
-
-    p {
-        margin: 0;
-        line-height: calc(var(--fontsize) * 2);
-        font-size: var(--fontsize);
-        font-weight: 400;
-    }
 `;
 
 const AddBalance = styled.div`
@@ -256,9 +249,19 @@ export default function Dashboard() {
                             <Info>Invoice: 0%</Info>
                         </InfoBox>
                     </InfoBar>
+                    {/* HERE ARE THE CHARTS
+                    -> */}
                     <DataBox>
                         <p>Cash Flow</p>
-                        <DataChart>AQUI VOU COLOCAR O CHART</DataChart>
+                        <DataChart>
+                            <CashflowChart/>
+                        </DataChart>
+                    </DataBox>
+                    <DataBox>
+                        <p>Balance</p>
+                        <DataChart>
+                            <InstallmentsChart/>
+                        </DataChart>
                     </DataBox>
                 </DashboardBox>
                 <ExportBox>

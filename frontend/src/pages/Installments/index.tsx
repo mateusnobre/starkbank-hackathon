@@ -1,12 +1,13 @@
 import styled from 'styled-components';
 import React from 'react';
 import Menu from '../../components/Menu';
+import InstallmentsChart from '../../components/InstallmentsChart';
 
 const Bkgdiv = styled.div`
     display: flex;
     flex-direction: column;
 
-    height: 200vh;
+    height: 90vh;
     padding-top: 5vh;
     width: 99vw;
 `;
@@ -45,53 +46,16 @@ const PageTitle = styled.div`
     font-weight: 400;
 `;
 
-const DataChart = styled.div`
+const ChartBox = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
 
-    height: 90%;
-    width: 90%;
-    margin-right: 10%;
-    margin-top: 2.5vh;
-    color: var(--color-bkg-hard);
-    background: purple;
-
-    p {
-        margin: 0;
-        line-height: calc(var(--fontsize) * 2);
-        font-size: var(--fontsize);
-        font-weight: 400;
-    }
-`;
-
-const AddBalance = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-
-    height: 5vh;
-    margin-top: 10vh;
+    height: 95%;
     width: 100%;
-
-    background: var(--color-pix);
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    
-    color: var(--color-bkg-hard);
-    font-size: var(--fontsize);
-    font-weight: 400;
-
-    transition: .5s;
-
-    :hover {
-        cursor: pointer;
-        background: var(--color-pix-dark);
-        color: var(--color-bkg-inv-soft);
-        transition: .5s;
-    }
+    margin-right: 5%;
+    margin-top: 2.5vh;
 `;
 
 const FuncButton = styled.div`
@@ -133,7 +97,9 @@ export default function Installments() {
             <ScreenDiv>
                 <InstallmentsBox>
                     <PageTitle>Installments</PageTitle>
-                    <DataChart>AQUI VOU COLOCAR O GRÁFICO</DataChart>
+                    <ChartBox>
+                        <InstallmentsChart/>
+                    </ChartBox>
                 </InstallmentsBox>
                 <ExportBox>
                     <FirstButton>Export</FirstButton>

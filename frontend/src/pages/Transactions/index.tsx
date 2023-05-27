@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import React from 'react';
 import Menu from '../../components/Menu';
-// import Exportbox from '../../components/Exportbox';
+import TransactionsTable from '../../components/TransactionsTable';
 
 const Bkgdiv = styled.div`
     display: flex;
@@ -46,53 +46,15 @@ const PageTitle = styled.div`
     font-weight: 400;
 `;
 
-const DataTable = styled.div`
+const TableBox = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
 
-    height: 90%;
-    width: 90%;
-    margin-right: 10%;
+    height: 95%;
+    width: 95%;
+    margin-right: 5%;
     margin-top: 2.5vh;
-    color: var(--color-bkg-hard);
-    background: purple;
-
-    p {
-        margin: 0;
-        line-height: calc(var(--fontsize) * 2);
-        font-size: var(--fontsize);
-        font-weight: 400;
-    }
-`;
-
-const AddBalance = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-
-    height: 5vh;
-    margin-top: 10vh;
-    width: 100%;
-
-    background: var(--color-pix);
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    
-    color: var(--color-bkg-hard);
-    font-size: var(--fontsize);
-    font-weight: 400;
-
-    transition: .5s;
-
-    :hover {
-        cursor: pointer;
-        background: var(--color-pix-dark);
-        color: var(--color-bkg-inv-soft);
-        transition: .5s;
-    }
 `;
 
 const FuncButton = styled.div`
@@ -134,7 +96,9 @@ export default function Transactions() {
             <ScreenDiv>
                 <TransactionBox>
                     <PageTitle>Transactions</PageTitle>
-                    <DataTable>AQUI VOU COLOCAR A DATA TABLE</DataTable>
+                    <TableBox>
+                        <TransactionsTable/>
+                    </TableBox>
                 </TransactionBox>
                 <ExportBox>
                     <FirstButton>Export</FirstButton>

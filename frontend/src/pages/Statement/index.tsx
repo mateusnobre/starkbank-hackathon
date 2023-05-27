@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import React, { useState } from 'react';
 import Menu from '../../components/Menu';
+import StatementTable from '../../components/StatementTable';
 // import { theme } from '../../theme';
 
 const Bkgdiv = styled.div`
@@ -100,24 +101,15 @@ const DescriptionBox = styled.div`
     }
 `;
 
-const DataTable = styled.div`
+const TableBox = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
 
-    height: 90%;
-    width: 90%;
-    margin-right: 10%;
-    color: var(--color-bkg-hard);
-    background: purple;
-
-    p {
-        margin: 0;
-        line-height: calc(var(--fontsize) * 2);
-        font-size: var(--fontsize);
-        font-weight: 400;
-    }
+    height: 95%;
+    width: 95%;
+    margin-right: 5%;
+    margin-top: 2.5vh;
 `;
 
 const AddBalance = styled.div`
@@ -229,7 +221,9 @@ export default function Statement() {
                     </BalanceBox>
                     <DescriptionBox>
                         <p>Description</p>
-                        <DataTable>AQUI VOU COLOCAR A DATA TABLE</DataTable>
+                        <TableBox>
+                            <StatementTable/>
+                        </TableBox>
                     </DescriptionBox>
                 </StatementBox>
                 <ExportBox>
