@@ -34,7 +34,6 @@ jobs:
           echo "SUPABASE_KEY=${{ secrets.SUPABASE_KEY }}" >> .env
           echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> .env
           cat .env
-          echo "Running tests" >> .test
-          cat .test
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           pytest
+          rm .env
