@@ -77,7 +77,7 @@ def get_payment_options():
 
     for n_installments in possible_ninstallments:
         monthly_payment_without_interest = financed_amount / n_installments
-        total_payment = 0
+        total_financed_payment = 0
         for months in range(n_installments):
             total_financed_payment += monthly_payment_without_interest * (
                 (1 + base_interest_rate) ** months
