@@ -97,21 +97,23 @@ export default function Menu() {
     return (
         <Menudiv>
             <Piximg src={DivPix} alt="Logo StarkBank"/>
+            <Option onClick={() => history('/statement')}>Statement</Option>
             <OptionSelect onClick={handleClick}
                           selected={showOptionsPP}
             >
                 <Arrow src={ArrowLeft} rotate={showOptionsPP}/>
-                <p>Pix Parcelado</p>
+                <p>Pix in Installments</p>
             </OptionSelect>
             {showOptionsPP && (
                 <div>
-                    <OptionNested>Investimentos</OptionNested>
-                    <OptionNested>Membros</OptionNested>
-                    <OptionNested>Integrações</OptionNested>
+                    <OptionNested>Transactions</OptionNested>
+                    <OptionNested>Installments</OptionNested>
+                    <OptionNested>Accounts Receivable</OptionNested>
+                    <OptionNested>Default Rate</OptionNested>
                 </div>
             )}
-            <Option onClick={() => history('/checkout')}>Recebimentos</Option>
-            <Option onClick={() => history('/checkout')}>Pagamentos</Option>
+            <Option onClick={() => history('/checkout')}>Credit Analysis</Option>
+            <Option onClick={() => history('/checkout')}>Settings</Option>
         </Menudiv>
     );
 }

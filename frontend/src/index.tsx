@@ -10,10 +10,12 @@ import {
 import reportWebVitals from './reportWebVitals';
 import Marketplace from './pages/Marketplace';
 import Checkout from './pages/Checkout';
+import Statement from './pages/Statement';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
+
 const router = createBrowserRouter([
   {
     path: "/dashboard",
@@ -28,6 +30,11 @@ const router = createBrowserRouter([
   {
     path: "/checkout",
     element: <Checkout />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/statement",
+    element: <Statement />,
     errorElement: <ErrorPage />,
   },
 ]);
