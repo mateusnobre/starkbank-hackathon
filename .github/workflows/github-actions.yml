@@ -31,3 +31,7 @@ jobs:
         run: |
           # stop the build if there are Python syntax errors or undefined names
           pytest
+          env:
+            API_PASSWORD=$API_PASSWORD
+            SUPABASE_KEY=$SUPABASE_KEY
+            SUPABASE_URL=$SUPABASE_URL
