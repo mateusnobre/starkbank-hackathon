@@ -13,21 +13,20 @@ from utils import (
 app = Flask(__name__)
 
 import os
-# from supabase import create_client
 from supabase import create_client
 
 load_dotenv()
 
-# Initialize Supabase client
-# SUPABASE_URL = os.environ.get("SUPABASE_URL")
-# SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
-# supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+SUPABASE_URL = os.environ.get("SUPABASE_URL")
+SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 
-# import api_split_payments
-# import api_clients
-# import api_final_users
-# import api_payment_transactions
+import api_split_payments
+import api_clients
+import api_final_users
+import api_payment_transactions
 import starkbank
 import uuid
 from datetime import datetime
@@ -240,6 +239,7 @@ def create_payment():
                     tags=['split_payment']
                 )
             )
+        
 
         brcodes = starkbank.dynamicbrcode.create(dynamics_brcodes)
         if brcodes is None or len(brcodes) < 1:

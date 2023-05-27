@@ -5,6 +5,32 @@ from app import app as app
 from app import supabase as supabase
 
 
+def save_split_payments_to_database(splitted_payment):
+    required_columns = [
+        "split_payment_id",
+        "original_amount",
+        "interest_rate",
+        "due_date",
+        "status",
+        "payment_method",
+        "final_user_id",
+        "client_id",
+        "total_amount"
+    ]
+    missing_columns = check_required_columns_post(splitted_payment, required_columns)
+    if missing_columns:
+        return False
+
+    try:
+        result = supabase.table("SplitPayments").insert(splitted_payment).execute()
+        print(result)
+        if not result:
+            False
+        return True
+    except Exception as e:
+        return False
+
+
 @app.route("/api/split_payments", methods=["POST"])
 @authenticate
 def create_split_payment():

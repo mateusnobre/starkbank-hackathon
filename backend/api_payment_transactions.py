@@ -4,6 +4,35 @@ from app import app as app
 from app import supabase as supabase
 
 
+def save_payment_transaction_to_database(payment_transaction):
+    required_columns = [
+        "transaction_id",
+        "split_payment_id",
+        "amount",
+        "status",
+        "transaction_date",
+        "payment_method",
+        "client_id",
+        "final_user_id",
+        "type",
+        "due_date",
+        "qr_code_copy",
+        "qt_code_img_link",
+        "stark_uuid",
+    ]
+    missing_columns = check_required_columns_post(payment_transaction, required_columns)
+    if missing_columns:
+        return False
+
+    try:
+        result = supabase.table("PaymentTransactions").insert(payment_transaction).execute()
+        if not result:
+            False
+        return True
+    except Exception as e:
+        return False
+
+
 @app.route("/api/payment_transactions", methods=["POST"])
 @authenticate
 def create_payment_transaction():
