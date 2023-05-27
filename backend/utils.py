@@ -1,5 +1,3 @@
-
-
 # Dummy authentication middleware
 from functools import wraps
 from dotenv import load_dotenv
@@ -9,6 +7,7 @@ import numpy as np
 
 load_dotenv()
 API_PASSWORD = os.getenv("API_PASSWORD")
+
 
 def authenticate(func):
     @wraps(func)
@@ -28,11 +27,13 @@ def authenticate(func):
 
     return decorated
 
+
 def check_required_columns(data, required_columns):
     missing_columns = [col for col in required_columns if col not in data]
     if missing_columns:
         return f"Missing required columns: {', '.join(missing_columns)}"
     return None
+
 
 # Define credit score ranges and corresponding interest rate ranges
 CREDIT_SCORE_RANGES = {
@@ -68,6 +69,7 @@ N_INSTALLMENTS = {
     "poor": [2, 3],
     "very_poor": [2],
 }
+
 
 def get_credit_score(final_user_id, final_user_document):
     # Get the credit score from the database

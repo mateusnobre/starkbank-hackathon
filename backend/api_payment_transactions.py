@@ -1,8 +1,8 @@
-
 from flask import request
 from utils import authenticate, check_required_columns
 from app import app as app
 from app import supabase as supabase
+
 
 @app.route("/api/payment_transactions", methods=["POST"])
 @authenticate
@@ -29,7 +29,16 @@ def create_payment_transaction():
     if not data:
         return "Request body is missing.", 400
 
-    required_columns = ["transaction_id", "split_payment_id", "amount", "status", "transaction_date", "payment_method", "client_id", "final_user_id"]
+    required_columns = [
+        "transaction_id",
+        "split_payment_id",
+        "amount",
+        "status",
+        "transaction_date",
+        "payment_method",
+        "client_id",
+        "final_user_id",
+    ]
     missing_columns = check_required_columns(data, required_columns)
     if missing_columns:
         return missing_columns, 400
@@ -41,6 +50,7 @@ def create_payment_transaction():
         return "Payment transaction created successfully.", 201
     except Exception as e:
         return str(e), 500
+
 
 @app.route("/api/payment_transactions/<transaction_id>", methods=["GET"])
 @authenticate
@@ -57,7 +67,12 @@ def get_single_payment_transaction(transaction_id):
     - 500 if there's an error during the retrieval process
     """
     try:
-        result = supabase.table("PaymentTransactions").select("*").eq("transaction_id", transaction_id).execute()
+        result = (
+            supabase.table("PaymentTransactions")
+            .select("*")
+            .eq("transaction_id", transaction_id)
+            .execute()
+        )
         if not result:
             return "Failed to retrieve payment transaction.", 500
         if len(result.data) == 0:
@@ -65,6 +80,7 @@ def get_single_payment_transaction(transaction_id):
         return result.data[0]
     except Exception as e:
         return str(e), 500
+
 
 @app.route("/api/payment_transactions/<transaction_id>", methods=["DELETE"])
 @authenticate
@@ -81,7 +97,12 @@ def delete_single_payment_transaction(transaction_id):
     - 500 if there's an error during the deletion process
     """
     try:
-        result = supabase.table("PaymentTransactions").delete().eq("transaction_id", transaction_id).execute()
+        result = (
+            supabase.table("PaymentTransactions")
+            .delete()
+            .eq("transaction_id", transaction_id)
+            .execute()
+        )
         if not result:
             return "Failed to delete payment transaction.", 500
         if result.count == 0:
@@ -89,6 +110,7 @@ def delete_single_payment_transaction(transaction_id):
         return "Payment transaction deleted successfully.", 200
     except Exception as e:
         return str(e), 500
+
 
 @app.route("/api/payment_transactions/<transaction_id>", methods=["PUT"])
 @authenticate
@@ -118,13 +140,26 @@ def update_single_payment_transaction(transaction_id):
     if not data:
         return "Request body is missing.", 400
 
-    required_columns = ["split_payment_id", "amount", "status", "transaction_date", "payment_method", "client_id", "final_user_id"]
+    required_columns = [
+        "split_payment_id",
+        "amount",
+        "status",
+        "transaction_date",
+        "payment_method",
+        "client_id",
+        "final_user_id",
+    ]
     missing_columns = check_required_columns(data, required_columns)
     if missing_columns:
         return missing_columns, 400
 
     try:
-        result = supabase.table("PaymentTransactions").update(data).eq("transaction_id", transaction_id).execute()
+        result = (
+            supabase.table("PaymentTransactions")
+            .update(data)
+            .eq("transaction_id", transaction_id)
+            .execute()
+        )
         if not result:
             return "Failed to update payment transaction.", 500
         if result.count == 0:

@@ -3,6 +3,7 @@ from utils import authenticate, check_required_columns
 from app import app as app
 from app import supabase as supabase
 
+
 @app.route("/api/clients", methods=["POST"])
 @authenticate
 def create_client():
@@ -39,6 +40,7 @@ def create_client():
     except Exception as e:
         return str(e), 500
 
+
 @app.route("/api/clients/<id>", methods=["GET"])
 @authenticate
 def get_single_client(id):
@@ -63,6 +65,7 @@ def get_single_client(id):
     except Exception as e:
         return str(e), 500
 
+
 @app.route("/api/clients/<id>", methods=["DELETE"])
 @authenticate
 def delete_single_client(id):
@@ -86,6 +89,7 @@ def delete_single_client(id):
         return "Client deleted successfully.", 200
     except Exception as e:
         return str(e), 500
+
 
 @app.route("/api/clients/<id>", methods=["PUT"])
 @authenticate
@@ -128,4 +132,3 @@ def update_single_client(id):
         return "Client updated successfully.", 200
     except Exception as e:
         return str(e), 500
-

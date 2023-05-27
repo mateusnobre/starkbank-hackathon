@@ -3,6 +3,7 @@ from utils import authenticate, check_required_columns
 from app import app as app
 from app import supabase as supabase
 
+
 @app.route("/api/final_users", methods=["POST"])
 @authenticate
 def create_final_user():
@@ -39,6 +40,7 @@ def create_final_user():
     except Exception as e:
         return str(e), 500
 
+
 @app.route("/api/final_users/<id>", methods=["GET"])
 @authenticate
 def get_single_final_user(id):
@@ -62,6 +64,7 @@ def get_single_final_user(id):
         return result.data[0]
     except Exception as e:
         return str(e), 500
+
 
 @app.route("/api/final_users/<id>", methods=["DELETE"])
 @authenticate
