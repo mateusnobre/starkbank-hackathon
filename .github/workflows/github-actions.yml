@@ -30,9 +30,11 @@ jobs:
         run: |
           # stop the build if there are Python syntax errors or undefined names
           cd backend
-          echo "API_PASSWORD=${{ env.API_PASSWORD }}" >> .env
-          echo "SUPABASE_KEY=${{ env.SUPABASE_KEY }}" >> .env
-          echo "SUPABASE_URL=${{ env.SUPABASE_URL }}" >> .env
+          echo "API_PASSWORD=${{ secrets.API_PASSWORD }}" >> .env
+          echo "SUPABASE_KEY=${{ secrets.SUPABASE_KEY }}" >> .env
+          echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> .env
           cat .env
+          echo "Running tests" >> .test
+          cat .test
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           pytest
