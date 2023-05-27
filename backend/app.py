@@ -9,8 +9,9 @@ from utils import (
     authenticate,
     get_credit_score,
 )
-
+from flask_cors import CORS
 app = Flask(__name__)
+CORS(app) # Allow CORS for all routes
 
 import os
 from supabase import create_client
