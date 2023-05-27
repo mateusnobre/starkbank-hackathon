@@ -7,16 +7,46 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
-import App from './App';
 import reportWebVitals from './reportWebVitals';
+import Marketplace from './pages/Marketplace';
+import Checkout from './pages/Checkout';
+import Statement from './pages/Statement';
+import Transactions from './pages/Transactions';
+import Installments from './pages/Installments';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
+
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: "/dashboard",
     element: <Dashboard />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/",
+    element: <Marketplace />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/checkout",
+    element: <Checkout />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/statement",
+    element: <Statement />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/transactions",
+    element: <Transactions />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/installments",
+    element: <Installments />,
     errorElement: <ErrorPage />,
   },
 ]);
