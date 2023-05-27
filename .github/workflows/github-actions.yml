@@ -33,9 +33,6 @@ jobs:
           echo $API_PASSWORD
           echo $SUPABASE_KEY
           echo $SUPABASE_URL
-          export API_PASSWORD=$API_PASSWORD
-          export SUPABASE_KEY=$SUPABASE_KEY
-          export SUPABASE_URL=$SUPABASE_URL
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           pytest
         env: API_PASSWORD=${{ env.API_PASSWORD }}
