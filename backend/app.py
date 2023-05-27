@@ -1,11 +1,20 @@
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify
-from utils import CREDIT_SCORE_RANGES, INTEREST_RATE_RANGES, MINIMUM_AMOUNT, N_INSTALLMENTS, TOTAL_AMOUNT_MAXIMUMS, authenticate, get_credit_score
+from utils import (
+    CREDIT_SCORE_RANGES,
+    INTEREST_RATE_RANGES,
+    MINIMUM_AMOUNT,
+    N_INSTALLMENTS,
+    TOTAL_AMOUNT_MAXIMUMS,
+    authenticate,
+    get_credit_score,
+)
 
 app = Flask(__name__)
 
 import os
 from supabase import create_client
+
 load_dotenv()
 
 # Initialize Supabase client
@@ -18,6 +27,7 @@ import api_split_payments
 import api_clients
 import api_final_users
 import api_payment_transactions
+
 
 @app.route("/api/get-payment-options", methods=["GET"])
 @authenticate
@@ -77,25 +87,28 @@ def get_payment_options():
 
     for n_installments in possible_ninstallments:
         monthly_payment_without_interest = financed_amount / n_installments
-        total_payment = 0
+        total_financed_payment = 0
         for months in range(n_installments):
             total_financed_payment += monthly_payment_without_interest * (
                 (1 + base_interest_rate) ** months
             )
-        monthly_payment = round(total_financed_payment / n_installments,2)
+        monthly_payment = round(total_financed_payment / n_installments, 2)
         total_financed_payment = monthly_payment * n_installments
-        interest_rate = (total_financed_payment / financed_amount) ** (1 / n_installments) - 1
+        interest_rate = (total_financed_payment / financed_amount) ** (
+            1 / n_installments
+        ) - 1
         eligible_options.append(
             {
                 "number_splits": n_installments,
                 "interest_rate": interest_rate,
                 "monthly_payment": monthly_payment,
                 "purchase_amount": purchase_amount,
-                "total_amount": total_financed_payment+down_payment
+                "total_amount": total_financed_payment + down_payment,
             }
         )
 
     return jsonify({"eligible_options": eligible_options}), 200
+
 
 @app.route("/api/payments", methods=["POST"])
 @authenticate

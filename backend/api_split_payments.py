@@ -4,6 +4,7 @@ from utils import authenticate, check_required_columns
 from app import app as app
 from app import supabase as supabase
 
+
 @app.route("/api/split_payments", methods=["POST"])
 @authenticate
 def create_split_payment():
@@ -30,18 +31,28 @@ def create_split_payment():
     if not data:
         return "Request body is missing.", 400
 
-    required_columns = ["split_payment_id", "amount", "interest_rate", "due_date", "status", "payment_method", "final_user_id", "client_id"]
+    required_columns = [
+        "split_payment_id",
+        "amount",
+        "interest_rate",
+        "due_date",
+        "status",
+        "payment_method",
+        "final_user_id",
+        "client_id",
+    ]
     missing_columns = check_required_columns(data, required_columns)
     if missing_columns:
         return missing_columns, 400
 
     try:
         result = supabase.table("SplitPayments").insert(data).execute()
-        if result.error:
+        if not result:
             return "Failed to create split payment.", 500
         return "Split payment created successfully.", 201
     except Exception as e:
         return str(e), 500
+
 
 @app.route("/api/split_payments/<id>", methods=["GET"])
 @authenticate
@@ -59,13 +70,14 @@ def get_single_split_payment(id):
     """
     try:
         result = supabase.table("SplitPayments").select("*").eq("id", id).execute()
-        if result.error:
+        if not result:
             return "Failed to retrieve split payment.", 500
         if len(result.data) == 0:
             return "Split payment not found.", 404
         return result.data[0]
     except Exception as e:
         return str(e), 500
+
 
 @app.route("/api/split_payments/<id>", methods=["DELETE"])
 @authenticate
@@ -83,13 +95,14 @@ def delete_single_split_payment(id):
     """
     try:
         result = supabase.table("SplitPayments").delete().eq("id", id).execute()
-        if result.error:
+        if not result:
             return "Failed to delete split payment.", 500
         if result.count == 0:
             return "Split payment not found.", 404
         return "Split payment deleted successfully.", 200
     except Exception as e:
         return str(e), 500
+
 
 @app.route("/api/split_payments/<id>", methods=["PUT"])
 @authenticate
@@ -121,20 +134,30 @@ def update_single_split_payment(id):
     if not data:
         return "Request body is missing.", 400
 
-    required_columns = ["split_payment_id", "amount", "interest_rate", "due_date", "status", "payment_method", "final_user_id", "client_id"]
+    required_columns = [
+        "split_payment_id",
+        "amount",
+        "interest_rate",
+        "due_date",
+        "status",
+        "payment_method",
+        "final_user_id",
+        "client_id",
+    ]
     missing_columns = check_required_columns(data, required_columns)
     if missing_columns:
         return missing_columns, 400
 
     try:
         result = supabase.table("SplitPayments").update(data).eq("id", id).execute()
-        if result.error:
+        if not result:
             return "Failed to update split payment.", 500
         if result.count == 0:
             return "Split payment not found.", 404
         return "Split payment updated successfully.", 200
     except Exception as e:
         return str(e), 500
+
 
 @app.route("/api/split_payments", methods=["GET"])
 @authenticate
@@ -148,11 +171,12 @@ def get_all_split_payments():
     """
     try:
         result = supabase.table("SplitPayments").select("*").execute()
-        if result.error:
+        if not result:
             return "Failed to retrieve split payments.", 500
         return result.data
     except Exception as e:
         return str(e), 500
+
 
 @app.route("/api/split_payments/due_date/<due_date>", methods=["GET"])
 @authenticate
@@ -168,10 +192,14 @@ def get_split_payments_by_due_date(due_date):
     - 500 if there's an error during the retrieval process
     """
     try:
-        result = supabase.table("SplitPayments").select("*").eq("due_date", due_date).execute()
-        if result.error:
+        result = (
+            supabase.table("SplitPayments")
+            .select("*")
+            .eq("due_date", due_date)
+            .execute()
+        )
+        if not result:
             return "Failed to retrieve split payments by due date.", 500
         return result.data
     except Exception as e:
         return str(e), 500
-

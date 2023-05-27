@@ -3,6 +3,7 @@ from utils import authenticate, check_required_columns
 from app import app as app
 from app import supabase as supabase
 
+
 @app.route("/api/final_users", methods=["POST"])
 @authenticate
 def create_final_user():
@@ -33,11 +34,12 @@ def create_final_user():
 
     try:
         result = supabase.table("FinalUsers").insert(data).execute()
-        if result.error:
+        if not result:
             return "Failed to create final user.", 500
         return "Final user created successfully.", 201
     except Exception as e:
         return str(e), 500
+
 
 @app.route("/api/final_users/<id>", methods=["GET"])
 @authenticate
@@ -55,13 +57,14 @@ def get_single_final_user(id):
     """
     try:
         result = supabase.table("FinalUsers").select("*").eq("id", id).execute()
-        if result.error:
+        if not result:
             return "Failed to retrieve final user.", 500
         if len(result.data) == 0:
             return "Final user not found.", 404
         return result.data[0]
     except Exception as e:
         return str(e), 500
+
 
 @app.route("/api/final_users/<id>", methods=["DELETE"])
 @authenticate
@@ -79,7 +82,7 @@ def delete_single_final_user(id):
     """
     try:
         result = supabase.table("FinalUsers").delete().eq("id", id).execute()
-        if result.error:
+        if not result:
             return "Failed to delete final user.", 500
         if result.count == 0:
             return "Final user not found.", 404
