@@ -297,3 +297,7 @@ cython_debug/
 */stark-test.py
 
 /.ruff_cache
+
+# add package-lock.json
+*/package-lock.json
+yarn.lock

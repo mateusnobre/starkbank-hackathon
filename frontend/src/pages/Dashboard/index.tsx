@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import Menu from '../../components/Menu';
 import CashflowChart from '../../components/CashflowChart';
 import InstallmentsChart from '../../components/InstallmentsChart';
+import Api from '../../hooks/api';
 
 const Bkgdiv = styled.div`
     display: flex;
@@ -217,6 +218,15 @@ export default function Dashboard() {
 
     const [testValue, setTestValue] = useState(2500);
 
+    Api('GET', 'split-payments')
+    .then((data) => {
+        // Handle the response data here
+        console.log('Received data:', data);
+    })
+    .catch((error) => {
+        // Handle errors here
+        console.error('Error:', error);
+    });
     const formattedTest = testValue.toLocaleString('pt-BR', {
         style: 'currency',
         currency: 'BRL',
