@@ -6,7 +6,6 @@ from faker import Faker
 
 def save_payment_transaction_to_database(payment_transaction):
     required_columns = [
-        "transaction_id",
         "split_payment_id",
         "amount",
         "status",
@@ -17,26 +16,28 @@ def save_payment_transaction_to_database(payment_transaction):
         "type",
         "due_date",
         "qr_code_copy",
-        "qt_code_img_link",
+        "qr_code_img_link",
         "stark_uuid",
     ]
+    payment_transaction["transaction_id"] = Faker().uuid4()
     missing_columns = check_required_columns_post(payment_transaction, required_columns)
     if missing_columns:
         return False
 
     try:
-        result = supabase.table("PaymentTransactions").insert(payment_transaction).execute()
+        result = supabase.table("PaymentsTransactions").insert(payment_transaction).execute()
         if not result:
             False
-        return True
+        return payment_transaction["transaction_id"]
     except Exception as e:
+        print(e)
         return False
 
 
 @app.route("/api/payment_transactions", methods=["POST"])
 @authenticate
 def create_payment_transaction():
-    """
+    """PRIVATE_KEY
     Create a new payment transaction.
 
     Request body:
@@ -75,7 +76,7 @@ def create_payment_transaction():
         "type",
         "due_date",
         "qr_code_copy",
-        "qt_code_img_link",
+        "qr_code_img_link",
         "stark_uuid",
     ]
     missing_columns = check_required_columns_post(data, required_columns)
@@ -83,7 +84,7 @@ def create_payment_transaction():
         return missing_columns, 400
 
     try:
-        result = supabase.table("PaymentTransactions").insert(data).execute()
+        result = supabase.table("PaymentsTransactions").insert(data).execute()
         if not result:
             return "Failed to create payment transaction.", 500
         return {"transaction_id": data["transaction_id"]}, 201

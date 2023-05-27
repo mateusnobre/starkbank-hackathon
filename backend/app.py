@@ -199,15 +199,21 @@ def create_payment():
             return jsonify({"error": "Invalid number of splits."}), 400
 
         future_payment = purchase_amount
+
         
         if down_payment is not None:
             future_payment -= down_payment
+        else:
+            down_payment = 0
         
         if interest_rate is not None:
             monthly_payment = (future_payment / number_splits) * (1 + interest_rate) ** number_splits
         
         future_payment = monthly_payment * number_splits
-        
+
+        if interest_rate is None:
+            #get interest rate from monthly payment and future payment
+            interest_rate = ((future_payment + down_payment)/purchase_amount) ** (1/number_splits) - 1
         
         if not isinstance(future_payment, (int, float)) or future_payment < 0:
             return jsonify({"error": "Invalid future payment."}), 400
@@ -240,11 +246,74 @@ def create_payment():
                 )
             )
         
+        splited_payment = {
+            "final_user_id": final_user_id,
+            "original_amount": purchase_amount,
+            "interest_rate": interest_rate,
+            "status": "pending",
+            "payment_method": "pix_brcode",
+            "client_id": "dc8a9c41-1bbd-48c9-b57d-24438e940d1a",
+            "total_amount": future_payment+ down_payment,
+        }
+
+        split_id = api_split_payments.save_split_payments_to_database(splited_payment)
+        if type(split_id) == bool and not split_id:
+            return jsonify({"error": "Error creating payment."}), 500
+        
 
         brcodes = starkbank.dynamicbrcode.create(dynamics_brcodes)
         if brcodes is None or len(brcodes) < 1:
             return jsonify({"error": "Error creating payment."}), 500
         
+        transaction_down_id = None
+        start_split = 0
+
+        if down_payment > 0:
+            transaction_down = {
+                "split_payment_id": split_id,
+                "amount": brcodes[0].amount,
+                "status": "pending",
+                "transaction_date": None,
+                "payment_method": "pix_brcode",
+                "client_id":  "dc8a9c41-1bbd-48c9-b57d-24438e940d1a",
+                "final_user_id": final_user_id,
+                "type": "down_payment",
+                "due_date": None,
+                "qr_code_copy": brcodes[0].id,
+                "qr_code_img_link": brcodes[0].picture_url,
+                "stark_uuid": brcodes[0].uuid
+            }
+            transaction_down_id = api_payment_transactions.save_payment_transaction_to_database(transaction_down)
+            
+            if type(transaction_down_id) == bool and not transaction_down_id:
+                return jsonify({"error": "Error creating payment."}), 500
+            
+            start_split = 1
+        
+        print(len(brcodes))
+        
+        for i in range(start_split, len(brcodes)):
+            print(i)
+            print(brcodes[i])
+            transaction = {
+                "split_payment_id": split_id,
+                "amount": brcodes[i].amount,
+                "status": "pending",
+                "transaction_date": None,
+                "payment_method": "pix_brcode",
+                "client_id":  "dc8a9c41-1bbd-48c9-b57d-24438e940d1a",
+                "final_user_id": final_user_id,
+                "type": "split_payment",
+                "due_date": due_dates_str[i-1 if down_payment > 0 else i],
+                "qr_code_copy": brcodes[i].id,
+                "qr_code_img_link": brcodes[i].picture_url,
+                "stark_uuid": brcodes[i].uuid
+            }
+            
+            transaction_id = api_payment_transactions.save_payment_transaction_to_database(transaction)
+            if type(transaction_id) == bool and not transaction_id:
+                return jsonify({"error": "Error creating payment."}), 500
+    
         if down_payment > 0:
             qr_code_copy =  brcodes[0].id
             qr_code_img_link = brcodes[0].picture_url
@@ -265,7 +334,6 @@ def create_payment():
     except Exception as e:
         print(e)
         return jsonify({"error": "Error creating payment."}), 500
-
 
 
 
