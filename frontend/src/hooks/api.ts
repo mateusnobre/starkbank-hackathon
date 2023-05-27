@@ -8,20 +8,26 @@ async function Api(method: 'GET' | 'POST' | 'PUT' | 'DELETE', endpoint: string, 
 
   const headers = {
     Authorization: password,
-  };
-
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods':'GET, POST, PUT, DELETE',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Credentials': true
+    
+  }; 
+  
+  
   const requestOptions: AxiosRequestConfig = {
     method,
     url,
     headers,
-    data: payload,
+    data: {},
   };
 
   try {
     const response = await axios(requestOptions);
     console.log(`Webhook ${method} request sent successfully:`, response.data);
   } catch (error) {
-    console.error(`Error sending webhook ${method} request`);
+    console.error(`Error sending webhook ${method} request`, error);
   }
 }
 

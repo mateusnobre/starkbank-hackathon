@@ -218,7 +218,7 @@ export default function Dashboard() {
 
     const [testValue, setTestValue] = useState(2500);
 
-    Api('GET', 'split-payments')
+    Api('GET', 'split_payments')
     .then((data) => {
         // Handle the response data here
         console.log('Received data:', data);

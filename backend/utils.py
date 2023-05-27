@@ -8,7 +8,6 @@ import numpy as np
 load_dotenv()
 API_PASSWORD = os.getenv("API_PASSWORD")
 
-
 def authenticate(func):
     @wraps(func)
     def decorated(*args, **kwargs):
