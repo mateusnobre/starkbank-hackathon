@@ -1,5 +1,5 @@
 from flask import request
-from utils import authenticate, check_required_columns
+from utils import authenticate, check_required_columns_post
 from app import app as app
 from app import supabase as supabase
 
@@ -28,7 +28,7 @@ def create_final_user():
         return "Request body is missing.", 400
 
     required_columns = ["client_id", "name", "email", "password", "role"]
-    missing_columns = check_required_columns(data, required_columns)
+    missing_columns = check_required_columns_post(data, required_columns)
     if missing_columns:
         return missing_columns, 400
 

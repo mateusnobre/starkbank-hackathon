@@ -1,5 +1,5 @@
 from flask import request
-from utils import authenticate, check_required_columns
+from utils import authenticate, check_required_columns_post, check_required_columns_update
 from app import app as app
 from app import supabase as supabase
 
@@ -19,6 +19,11 @@ def create_payment_transaction():
     - payment_method: The payment method used for the transaction (e.g., Pix)
     - client_id: ID of the StarkInfra user initiating the transaction
     - final_user_id: ID of the customer involved in the transaction
+    - type: specifies if it's a down_payment or one of the split portions
+    - due_date: due date for the transaction to be effective
+    - qr_code_copy: Code for making transactions "Pix Copia e Cola"
+    - qt_code_img_link: link for QR Code image generated
+    - stark_uuid: uuid for the transaction
 
     Returns:
     - 201 if the payment transaction is created successfully
@@ -38,8 +43,13 @@ def create_payment_transaction():
         "payment_method",
         "client_id",
         "final_user_id",
+        "type",
+        "due_date",
+        "qr_code_copy",
+        "qt_code_img_link",
+        "stark_uuid",
     ]
-    missing_columns = check_required_columns(data, required_columns)
+    missing_columns = check_required_columns_post(data, required_columns)
     if missing_columns:
         return missing_columns, 400
 
@@ -129,6 +139,11 @@ def update_single_payment_transaction(transaction_id):
     - payment_method: The payment method used for the transaction (e.g., Pix)
     - client_id: ID of the StarkInfra user initiating the transaction
     - final_user_id: ID of the customer involved in the transaction
+    - type: specifies if it's a down_payment or one of the split portions
+    - due_date: due date for the transaction to be effective
+    - qr_code_copy: Code for making transactions "Pix Copia e Cola"
+    - qt_code_img_link: link for QR Code image generated
+    - stark_uuid: uuid for the transaction
 
     Returns:
     - 200 if the payment transaction is updated successfully
@@ -148,10 +163,15 @@ def update_single_payment_transaction(transaction_id):
         "payment_method",
         "client_id",
         "final_user_id",
+        "type",
+        "due_date",
+        "qr_code_copy",
+        "qt_code_img_link",
+        "stark_uuid",
     ]
-    missing_columns = check_required_columns(data, required_columns)
-    if missing_columns:
-        return missing_columns, 400
+    update_columns = check_required_columns_update(data, required_columns)
+    if update_columns:
+        return update_columns, 400
 
     try:
         result = (
