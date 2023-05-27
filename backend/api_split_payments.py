@@ -7,27 +7,27 @@ from faker import Faker
 
 def save_split_payments_to_database(splitted_payment):
     required_columns = [
-        "split_payment_id",
         "original_amount",
         "interest_rate",
-        "due_date",
         "status",
         "payment_method",
         "final_user_id",
         "client_id",
         "total_amount"
     ]
+    splitted_payment["split_payment_id"] = Faker().uuid4()
+
     missing_columns = check_required_columns_post(splitted_payment, required_columns)
     if missing_columns:
         return False
 
     try:
         result = supabase.table("SplitPayments").insert(splitted_payment).execute()
-        print(result)
         if not result:
             False
-        return True
+        return splitted_payment["split_payment_id"]
     except Exception as e:
+        print(e)
         return False
 
 
