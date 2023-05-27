@@ -57,6 +57,10 @@ const Option = styled.div`
     }
 `;
 
+const OptionC = styled(Option)`
+    font-weight: 700;
+`;
+
 const OptionSelect = styled(Option)<{selected: boolean}>`
 
     padding-left: 0;
@@ -114,6 +118,7 @@ export default function Menu() {
                 </div>
             )}
             <Option onClick={() => history('/checkout')}>Credit Analysis</Option>
+            <OptionC onClick={() => history('/checkout')}>My Checkout Page</OptionC>
             <Option onClick={() => history('/checkout')}>Settings</Option>
         </Menudiv>
     );
