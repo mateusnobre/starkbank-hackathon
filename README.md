@@ -1,4 +1,4 @@
-# starkbank-hackathon
+# DivPix: A solution for Starkinfra
 
 ## Description
 
