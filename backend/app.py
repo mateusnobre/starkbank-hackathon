@@ -1,26 +1,8 @@
 from dotenv import load_dotenv
-import numpy as np
-import uuid
-import starkinfra
-import starkbank
-from datetime import datetime
-from dateutil.relativedelta import relativedelta
-
-load_dotenv()
 from flask import Flask, request, jsonify
 from utils import CREDIT_SCORE_RANGES, INTEREST_RATE_RANGES, MINIMUM_AMOUNT, N_INSTALLMENTS, TOTAL_AMOUNT_MAXIMUMS, authenticate, get_credit_score
 
-app = Flask(__name__)
-private_key_content = os.getenv("PRIVATE_KEY")
-
-#get data from .pem file private key
-
-
-project = starkbank.Project(
-    environment="sandbox", id="6142453941796864", private_key=private_key_content
-)
-
-starkbank.user = project
+app = Flask(_name_)
 
 import os
 from supabase import create_client
@@ -36,6 +18,12 @@ import api_split_payments
 import api_clients
 import api_final_users
 import api_payment_transactions
+import starkbank
+import uuid
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
+
+
 
 @app.route("/api/get-payment-options", methods=["GET"])
 @authenticate
