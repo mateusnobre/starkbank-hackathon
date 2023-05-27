@@ -5,9 +5,6 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
-    env: API_PASSWORD=${{ env.API_PASSWORD }}
-      SUPABASE_KEY=${{ env.SUPABASE_KEY }}
-      SUPABASE_URL=${{ env.SUPABASE_URL }}
     strategy:
       matrix:
         python-version: ["3.10"]
@@ -41,3 +38,6 @@ jobs:
           export SUPABASE_KEY=${{ env.SUPABASE_KEY }}
           export SUPABASE_URL=${{ env.SUPABASE_URL }}
           pytest
+        env: API_PASSWORD=${{ env.API_PASSWORD }}
+          SUPABASE_KEY=${{ env.SUPABASE_KEY }}
+          SUPABASE_URL=${{ env.SUPABASE_URL }}
