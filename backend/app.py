@@ -2,26 +2,35 @@ from dotenv import load_dotenv
 from flask import Flask, request, jsonify
 from utils import CREDIT_SCORE_RANGES, INTEREST_RATE_RANGES, MINIMUM_AMOUNT, N_INSTALLMENTS, TOTAL_AMOUNT_MAXIMUMS, authenticate, get_credit_score
 
-app = Flask(_name_)
+app = Flask(__name__)
 
 import os
-from supabase import create_client
+# from supabase import create_client
 load_dotenv()
 
 # Initialize Supabase client
-SUPABASE_URL = os.environ.get("SUPABASE_URL")
-SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
-supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+# SUPABASE_URL = os.environ.get("SUPABASE_URL")
+# SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
+# supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 
-import api_split_payments
-import api_clients
-import api_final_users
-import api_payment_transactions
+# import api_split_payments
+# import api_clients
+# import api_final_users
+# import api_payment_transactions
 import starkbank
 import uuid
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+
+private_key_content = os.getenv("PRIVATE_KEY")
+
+user = starkbank.Project(
+    environment="sandbox",
+    id="6142453941796864",
+    private_key=private_key_content
+)
+starkbank.user = user
 
 
 
@@ -189,21 +198,49 @@ def create_payment():
             monthly_payment = (future_payment / number_splits) * (1 + interest_rate) ** number_splits
         
         due_dates = [datetime.now() + relativedelta(months=i) for i in range(1, number_splits + 1)]
-    
-        due_dates = [date.strftime("%d/%m/%Y") for date in due_dates]
-                           
+        due_dates_str = [date.strftime("%Y-%m-%d") for date in due_dates]
+        due_dates_timestamp = [int(datetime.timestamp(date)) for date in due_dates]
 
-        unique_id = str(uuid.uuid4())
-        print(unique_id)
-        brcodes = starkbank.dynamicbrcode.create([
-            starkbank.DynamicBrcode(
-                amount=4000,
-                expiration=123456789,
-                tags=['New sword', 'DynamicBrcode #1234']
+        dynamics_brcodes = []
+        
+        if down_payment > 0:
+            dynamics_brcodes.append(
+                starkbank.DynamicBrcode(
+                    amount=down_payment,
+                    tags=['down_payment']
+                )
             )
-        ])
-        print(brcodes)
-        return jsonify({"message": "Payment created successfully.", "brcodes": brcodes}), 200
+        
+        for i in range(number_splits):
+            dynamics_brcodes.append(
+                starkbank.DynamicBrcode(
+                    amount=monthly_payment,
+                    expiration=due_dates_timestamp[i],
+                    tags=['split_payment']
+                )
+            )
+
+        brcodes = starkbank.dynamicbrcode.create(dynamics_brcodes)
+        if brcodes is None or len(brcodes) < 1:
+            return jsonify({"error": "Error creating payment."}), 500
+        
+        if down_payment > 0:
+            qr_code_copy =  brcodes[0].id
+            qr_code_img_link = brcodes[0].picture_url
+
+            return jsonify({
+                "message": "Payment created successfully",
+                "qr_code_copy": qr_code_copy,
+                "qr_code_img_link": qr_code_img_link,
+                "due_dates": due_dates_str[1:] if len(due_dates_str) > 1 else [],
+                "monthly_payment": monthly_payment,
+            }), 200
+        
+        return jsonify({
+                "message": "Payment created successfully",
+                "due_dates": due_dates_str[1:] if len(due_dates_str) > 1 else [],
+                "monthly_payment": monthly_payment,
+            }), 200
     except Exception as e:
         print(e)
         return jsonify({"error": "Error creating payment."}), 500
