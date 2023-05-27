@@ -295,3 +295,5 @@ cython_debug/
 */generate_key.py
 
 */stark-test.py
+
+/.ruff_cache

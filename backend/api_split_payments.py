@@ -97,7 +97,7 @@ def get_single_split_payment(id):
     - 500 if there's an error during the retrieval process
     """
     try:
-        result = supabase.table("SplitPayments").select("*").eq("id", id).execute()
+        result = supabase.table("SplitPayments").select("*").eq("split_payment_id", id).execute()
         if not result:
             return "Failed to retrieve split payment.", 500
         if len(result.data) == 0:
@@ -122,7 +122,7 @@ def delete_single_split_payment(id):
     - 500 if there's an error during the deletion process
     """
     try:
-        result = supabase.table("SplitPayments").delete().eq("id", id).execute()
+        result = supabase.table("SplitPayments").delete().eq("split_payment_id", id).execute()
         if not result:
             return "Failed to delete split payment.", 500
         if result.count == 0:
@@ -179,7 +179,7 @@ def update_single_split_payment(id):
         return update_columns, 400
 
     try:
-        result = supabase.table("SplitPayments").update(data).eq("id", id).execute()
+        result = supabase.table("SplitPayments").update(data).eq("split_payment_id", id).execute()
         if not result:
             return "Failed to update split payment.", 500
         if result.count == 0:

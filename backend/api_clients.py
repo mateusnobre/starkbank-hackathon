@@ -56,7 +56,7 @@ def get_single_client(id):
     - 500 if there's an error during the retrieval process
     """
     try:
-        result = supabase.table("Clients").select("*").eq("id", id).execute()
+        result = supabase.table("Clients").select("*").eq("client_id", id).execute()
         if not result:
             return "Failed to retrieve client.", 500
         if len(result.data) == 0:
@@ -81,7 +81,7 @@ def delete_single_client(id):
     - 500 if there's an error during the deletion process
     """
     try:
-        result = supabase.table("Clients").delete().eq("id", id).execute()
+        result = supabase.table("Clients").delete().eq("client_id", id).execute()
         if not result:
             return "Failed to delete client.", 500
         if result.count == 0:
@@ -124,7 +124,7 @@ def update_single_client(id):
         return update_columns, 400
 
     try:
-        result = supabase.table("Clients").update(data).eq("id", id).execute()
+        result = supabase.table("Clients").update(data).eq("client_id", id).execute()
         if not result:
             return "Failed to update client.", 500
         if result.count == 0:
