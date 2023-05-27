@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
 from flask import request
-from utils import authenticate, check_required_columns
+from utils import authenticate, check_required_columns_post, check_required_columns_update
 from app import app as app
 from app import supabase as supabase
 
@@ -13,7 +13,7 @@ def create_split_payment():
 
     Request body:
     - split_payment_id: Unique identifier for each split payment
-    - amount: The total amount of the split payment
+    - original_amount: The total original_amount of the split payment
     - interest_rate: The interest rate charged on the split payment
     - due_date: The due date for the split payment
     - status: Current status of the split payment (e.g., pending, paid, overdue)
@@ -21,6 +21,7 @@ def create_split_payment():
     - final_user_id: ID of the customer making the split payment
     - client_id: ID of the StarkInfra user managing the split payment
     - created_at: Timestamp indicating when the split payment was created
+    - total_amount: The total amount of the split payment after applying interest
 
     Returns:
     - 201 if the split payment is created successfully
@@ -33,15 +34,16 @@ def create_split_payment():
 
     required_columns = [
         "split_payment_id",
-        "amount",
+        "original_amount",
         "interest_rate",
         "due_date",
         "status",
         "payment_method",
         "final_user_id",
         "client_id",
+        "total_amount"
     ]
-    missing_columns = check_required_columns(data, required_columns)
+    missing_columns = check_required_columns_post(data, required_columns)
     if missing_columns:
         return missing_columns, 400
 
@@ -115,7 +117,7 @@ def update_single_split_payment(id):
 
     Request body:
     - split_payment_id: Unique identifier for each split payment
-    - amount: The total amount of the split payment
+    - original_amount: The total original_amount of the split payment
     - interest_rate: The interest rate charged on the split payment
     - due_date: The due date for the split payment
     - status: Current status of the split payment (e.g., pending, paid, overdue)
@@ -123,6 +125,7 @@ def update_single_split_payment(id):
     - final_user_id: ID of the customer making the split payment
     - client_id: ID of the StarkInfra user managing the split payment
     - created_at: Timestamp indicating when the split payment was created
+    - total_amount: The total amount of the split payment after applying interest
 
     Returns:
     - 200 if the split payment is updated successfully
@@ -136,17 +139,18 @@ def update_single_split_payment(id):
 
     required_columns = [
         "split_payment_id",
-        "amount",
+        "original_amount",
         "interest_rate",
         "due_date",
         "status",
         "payment_method",
         "final_user_id",
         "client_id",
+        "total_amount",
     ]
-    missing_columns = check_required_columns(data, required_columns)
-    if missing_columns:
-        return missing_columns, 400
+    update_columns = check_required_columns_update(data, required_columns)
+    if update_columns:
+        return update_columns, 400
 
     try:
         result = supabase.table("SplitPayments").update(data).eq("id", id).execute()
