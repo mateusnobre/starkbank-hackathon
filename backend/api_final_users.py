@@ -2,6 +2,7 @@ from flask import request
 from utils import authenticate, check_required_columns_post
 from app import app as app
 from app import supabase as supabase
+from faker import Faker
 
 
 @app.route("/api/final_users", methods=["POST"])
@@ -27,7 +28,9 @@ def create_final_user():
     if not data:
         return "Request body is missing.", 400
 
-    required_columns = ["client_id", "name", "email", "password", "role"]
+    required_columns = ["name", "email", "password", "role"]
+    data["final_user_id"] = Faker().uuid4()
+
     missing_columns = check_required_columns_post(data, required_columns)
     if missing_columns:
         return missing_columns, 400
@@ -36,7 +39,8 @@ def create_final_user():
         result = supabase.table("FinalUsers").insert(data).execute()
         if not result:
             return "Failed to create final user.", 500
-        return "Final user created successfully.", 201
+        return {"final_user_id": data["final_user_id"]}, 201
+
     except Exception as e:
         return str(e), 500
 
