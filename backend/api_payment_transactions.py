@@ -1,8 +1,13 @@
 from flask import request
-from utils import authenticate, check_required_columns_post, check_required_columns_update
+from utils import (
+    authenticate,
+    check_required_columns_post,
+    check_required_columns_update,
+)
 from app import app as app
 from app import supabase as supabase
 from faker import Faker
+
 
 def save_payment_transaction_to_database(payment_transaction):
     required_columns = [
@@ -25,7 +30,9 @@ def save_payment_transaction_to_database(payment_transaction):
         return False
 
     try:
-        result = supabase.table("PaymentsTransactions").insert(payment_transaction).execute()
+        result = (
+            supabase.table("PaymentsTransactions").insert(payment_transaction).execute()
+        )
         if not result:
             False
         return payment_transaction["transaction_id"]
