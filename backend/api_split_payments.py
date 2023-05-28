@@ -3,6 +3,32 @@ from flask import request
 from utils import authenticate, check_required_columns_post, check_required_columns_update
 from app import app as app
 from app import supabase as supabase
+from faker import Faker
+
+def save_split_payments_to_database(splitted_payment):
+    required_columns = [
+        "original_amount",
+        "interest_rate",
+        "status",
+        "payment_method",
+        "final_user_id",
+        "client_id",
+        "total_amount"
+    ]
+    splitted_payment["split_payment_id"] = Faker().uuid4()
+
+    missing_columns = check_required_columns_post(splitted_payment, required_columns)
+    if missing_columns:
+        return False
+
+    try:
+        result = supabase.table("SplitPayments").insert(splitted_payment).execute()
+        if not result:
+            False
+        return splitted_payment["split_payment_id"]
+    except Exception as e:
+        print(e)
+        return False
 
 
 @app.route("/api/split_payments", methods=["POST"])
@@ -33,7 +59,6 @@ def create_split_payment():
         return "Request body is missing.", 400
 
     required_columns = [
-        "split_payment_id",
         "original_amount",
         "interest_rate",
         "due_date",
@@ -43,6 +68,8 @@ def create_split_payment():
         "client_id",
         "total_amount"
     ]
+    data["split_payment_id"] = Faker().uuid4()
+
     missing_columns = check_required_columns_post(data, required_columns)
     if missing_columns:
         return missing_columns, 400
@@ -51,7 +78,7 @@ def create_split_payment():
         result = supabase.table("SplitPayments").insert(data).execute()
         if not result:
             return "Failed to create split payment.", 500
-        return "Split payment created successfully.", 201
+        return {"split_payment_id" : data["split_payment_id"]}, 201
     except Exception as e:
         return str(e), 500
 
@@ -71,7 +98,7 @@ def get_single_split_payment(id):
     - 500 if there's an error during the retrieval process
     """
     try:
-        result = supabase.table("SplitPayments").select("*").eq("id", id).execute()
+        result = supabase.table("SplitPayments").select("*").eq("split_payment_id", id).execute()
         if not result:
             return "Failed to retrieve split payment.", 500
         if len(result.data) == 0:
@@ -96,7 +123,7 @@ def delete_single_split_payment(id):
     - 500 if there's an error during the deletion process
     """
     try:
-        result = supabase.table("SplitPayments").delete().eq("id", id).execute()
+        result = supabase.table("SplitPayments").delete().eq("split_payment_id", id).execute()
         if not result:
             return "Failed to delete split payment.", 500
         if result.count == 0:
@@ -137,8 +164,7 @@ def update_single_split_payment(id):
     if not data:
         return "Request body is missing.", 400
 
-    required_columns = [
-        "split_payment_id",
+    possible_columns = [
         "original_amount",
         "interest_rate",
         "due_date",
@@ -148,12 +174,12 @@ def update_single_split_payment(id):
         "client_id",
         "total_amount",
     ]
-    update_columns = check_required_columns_update(data, required_columns)
+    update_columns = check_required_columns_update(data, possible_columns)
     if update_columns:
         return update_columns, 400
 
     try:
-        result = supabase.table("SplitPayments").update(data).eq("id", id).execute()
+        result = supabase.table("SplitPayments").update(data).eq("split_payment_id", id).execute()
         if not result:
             return "Failed to update split payment.", 500
         if result.count == 0:
