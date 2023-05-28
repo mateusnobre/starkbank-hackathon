@@ -16,7 +16,6 @@ def create_client():
     Create a new client.
 
     Request body:
-    - client_id: Unique identifier for each StarkInfra user
     - name: Name of the user
     - email: Email address of the user
     - role: Role or position of the user within StarkInfra (e.g., admin, customer support)
