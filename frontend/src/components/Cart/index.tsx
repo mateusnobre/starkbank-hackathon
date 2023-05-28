@@ -191,7 +191,7 @@ export default function Cart(props: any) {
 
     const history = useNavigate();
 
-    const {price, setPrice} = props
+    const {price, setPrice, downPayment, setDownPayment} = props
 
     const [display, setDisplay] = useState(0);
 
@@ -232,6 +232,14 @@ export default function Cart(props: any) {
                     placeholder='XXXXX'
                     value={price}
                     onChange={(e) => setPrice(e.target.value)}
+                >
+                </InputBox>
+                <InputName>Down Payment</InputName>
+                <InputBox 
+                    type="number"
+                    placeholder='XXXXX'
+                    value={downPayment}
+                    onChange={(e) => setDownPayment(e.target.value)}
                 >
                 </InputBox>
                 <SendButton type="submit">Simulate customer cart</SendButton>
