@@ -46,7 +46,7 @@ const data = [
   },
 ];
 
-export default class InstallmentsChart extends PureComponent {
+export default class BalanceChart extends PureComponent {
 
   render() {
     return (
@@ -67,7 +67,7 @@ export default class InstallmentsChart extends PureComponent {
           <YAxis />
           <Tooltip />
           <Legend />
-          <Line type="monotone" dataKey="pv" stroke="var(--color-bkg-hard)" />
+          <Line type="monotone" dataKey="pv" stroke="var(--color-bkg-hard)" activeDot={{ r: 8 }} />
           <Line type="monotone" dataKey="uv" stroke="var(--color-pix)" />
         </LineChart>
       </ResponsiveContainer>

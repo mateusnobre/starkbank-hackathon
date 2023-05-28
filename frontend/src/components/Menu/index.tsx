@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 import React, { useState } from 'react';
-import StarkLogo from '../../assets/stark_logo.png';
 import DivPix from '../../assets/divpix_logo_white.png';
 import ArrowLeft from '../../assets/arrow_black.png';
 import { useNavigate } from 'react-router-dom';

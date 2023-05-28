@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import DivPix from '../../assets/divpix_logo_white.png';
 import EmpresaX from '../../assets/petlove_logo.png';
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Cartdiv = styled.div`
     display: flex;
@@ -158,6 +159,14 @@ const SendButton = styled.button`
     }
 `;
 
+const ReturnButton = styled(SendButton)`
+    margin: 0;
+    height: 4vh;
+    width: 12%;
+    margin-right: 88%;
+    font-size: .8vw;
+`;
+
 const PayWrapper = styled.div`
     display: flex;
     flex-direction: row;
@@ -179,6 +188,8 @@ const PayWrapper = styled.div`
 `;
 
 export default function Cart() {
+
+    const history = useNavigate();
 
     const [price, setPrice] = useState('');
     const [display, setDisplay] = useState('');
@@ -227,6 +238,7 @@ export default function Cart() {
             <PayWrapper>
                 <p>Total: <span>{formattedPrice}</span></p>
             </PayWrapper>
+            <ReturnButton onClick={() => history('/dashboard')}>Return</ReturnButton>
         </Cartdiv>
     );
 }

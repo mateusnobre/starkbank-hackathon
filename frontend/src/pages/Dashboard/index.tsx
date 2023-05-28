@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import React, { useState } from 'react';
 import Menu from '../../components/Menu';
 import CashflowChart from '../../components/CashflowChart';
-import InstallmentsChart from '../../components/InstallmentsChart';
+import BalanceChart from '../../components/BalanceChart';
 
 const Bkgdiv = styled.div`
     display: flex;
@@ -260,7 +260,7 @@ export default function Dashboard() {
                     <DataBox>
                         <p>Balance</p>
                         <DataChart>
-                            <InstallmentsChart/>
+                            <BalanceChart/>
                         </DataChart>
                     </DataBox>
                 </DashboardBox>
