@@ -8,6 +8,7 @@ import numpy as np
 load_dotenv()
 API_PASSWORD = os.getenv("API_PASSWORD")
 
+
 def authenticate(func):
     @wraps(func)
     def decorated(*args, **kwargs):
@@ -33,12 +34,12 @@ def check_required_columns_post(data, required_columns):
         return f"Missing required columns: {', '.join(missing_columns)}"
     return None
 
+
 def check_required_columns_update(data, required_columns):
     update_columns = [col for col in required_columns if col in data]
     if len(update_columns) == 0:
         return f"At least 1 column is required for update"
     return None
-
 
 
 # Define credit score ranges and corresponding interest rate ranges
