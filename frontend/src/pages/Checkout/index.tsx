@@ -57,7 +57,8 @@ const Footer = styled.div`
 
 export default function Checkout() {
 
-    const [price, setPrice] = useState('');
+    const [price, setPrice] = useState(0);
+    const [downPayment, setDownPayment] = useState(0);
 
     return (
         <Bkgdiv>
@@ -65,11 +66,14 @@ export default function Checkout() {
                 <Cart
                 price={price}
                 setPrice={setPrice}
+                downPayment={downPayment}
+                setDownPayment={setDownPayment}
                 />
             </CartWrapper>
             <BillingWrapper>
                 <Billing
                 price={price}
+                downPayment={downPayment}
                 />
             </BillingWrapper>
             <Footer>

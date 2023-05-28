@@ -173,6 +173,7 @@ const SelectBox = styled.select`
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    text-align: center;
 
     text-indent: 1vw;
     width: 100%;
@@ -241,6 +242,7 @@ const SendButton = styled.button`
 export default function Billing(props: any) {
     
     const price = props.price;
+    const initialDownPayment = props.downPayment
 
     const [name, setName] = useState("");
     const [cpf, setCpf] = useState("");
@@ -250,6 +252,12 @@ export default function Billing(props: any) {
 
     const userId = "43a39201-dd1a-4636-9485-592103dba08e"
     const [paymentOptions, setPaymentOptions] = useState([]);
+
+    const [loadingPayment, setLoadingPayment] = useState(false);
+    const [purchaseAmount, setPurchaseAmount] = useState(0);
+    const [downPayment, setDownPayment] = useState(0);
+    const [monthlyPayment, setMonthlyPayment] = useState(0);
+    const [numberSplits, setNumberSplits] = useState(0);
     
 
     const handleInfoSubmit = (event: any) => {
@@ -263,7 +271,7 @@ export default function Billing(props: any) {
         const body = {
             "final_user_id": userId,
             "purchase_amount": Number(price),
-            "down_payment": 0,
+            "down_payment": Number(Number(initialDownPayment).toFixed(2)),
             "final_user_document": cpf
         }
 
@@ -271,6 +279,11 @@ export default function Billing(props: any) {
         .then((res) => {
             console.log(res.data.eligible_options)
             setPaymentOptions(res.data.eligible_options);
+            const option1 = res.data.eligible_options[0];
+            setPurchaseAmount(option1.purchase_amount);
+            setMonthlyPayment(option1.monthly_payment);
+            setNumberSplits(option1.number_splits);
+            setDownPayment(option1.purchase_amount - option1.monthly_payment * option1.number_splits);
             setShowPayment(true)
         })
         .catch((err) => {
@@ -284,8 +297,33 @@ export default function Billing(props: any) {
 
     const handlePaymentSubmit = (event: any) => {
         event.preventDefault();
-        console.log('form submitted ✅');
-        alert(`The payment is done`)
+        setLoadingPayment(true);
+        const url = `${process.env.REACT_APP_BASE_URL}/create-payment`;
+        const header= {
+            Authorization: process.env.REACT_APP_PASSWORD
+        }
+
+        const body = {
+            "final_user_id": userId,
+            "purchase_amount": Number(purchaseAmount),
+            "number_splits": Number(numberSplits),
+            "down_payment": Number(Number(downPayment).toFixed(2)),
+            "monthly_payment": Number(monthlyPayment)
+        }
+
+        console.log(body)
+
+        axios.post(url, body, {headers: header})
+        .then((res) => {
+            console.log(res);
+        })
+        .catch((err) => {
+            console.log(err);
+            alert("Error getting payment options. Try again later.")
+        })
+        .finally(() => {
+            setLoadingPayment(false);
+        });
     };
 
     const numberInputRef = useRef<HTMLInputElement>(null);
@@ -362,6 +400,13 @@ export default function Billing(props: any) {
                 <InputName>Método</InputName>
                 <SelectBox 
                     placeholder='Escolha em quantas vezes parcelar'
+                    value={paymentOptions[0]}
+                    onChange={(e: any)=> {
+                        setPurchaseAmount(paymentOptions[e.target.value]["purchase_amount"]);
+                        setMonthlyPayment(paymentOptions[e.target.value]["monthly_payment"]);
+                        setNumberSplits(paymentOptions[e.target.value]["number_splits"]);
+                        setDownPayment(paymentOptions[e.target.value]["purchase_amount"] - paymentOptions[e.target.value]["monthly_payment"] * paymentOptions[e.target.value]["number_splits"]);
+                    }}
                 >
                     {paymentOptions.map((option: any, idx) => {
                         
@@ -369,19 +414,16 @@ export default function Billing(props: any) {
                         const installmentValue = option.monthly_payment;
                         const totalValue = option.total_amount;
 
-
                         return(
-                            <option key={idx} value={idx}>{`${installments} vezes de R$ ${Number(installmentValue).toFixed(2)}     `} <span>Total: R${Number(totalValue).toFixed(2)}</span> </option>
+                            <option 
+                           
+                            key={idx} value={idx}>{`${installments} vezes de R$ ${Number(installmentValue).toFixed(2)}     `} <span>Total: R${Number(totalValue).toFixed(2)}</span> </option>
                         );
                     })}
                 </SelectBox>
-                <InputName>Chave Pix</InputName>
-                <InputBox 
-                    type="number"
-                    placeholder='XXXXX'
-                >
-                </InputBox>
-                <SendButton type="submit">Send Payment</SendButton>
+                
+                <SendButton className={loadingPayment ? 'loading' : ''}
+                type="submit">{loadingPayment ? <div className="lds-ring"><div></div><div></div><div></div><div></div></div>  :"Approve Purchase"}</SendButton>
             </PaymentForm>}
         </Billingdiv>
     );
