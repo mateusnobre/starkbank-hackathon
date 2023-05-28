@@ -17,6 +17,48 @@ const AuthForm = styled.form`
     align-items: center;
     height: 42%;
     width: 100%;
+
+    .lds-ring {
+    display: inline-block;
+    position: relative;
+    width: 40px;
+    height: 40px;
+    }
+    .lds-ring div {
+    box-sizing: border-box;
+    display: block;
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    margin: 8px;
+    border: 8px solid #fff;
+    border-radius: 50%;
+    animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    border-color: #fff transparent transparent transparent;
+    }
+    .lds-ring div:nth-child(1) {
+    animation-delay: -0.45s;
+    }
+    .lds-ring div:nth-child(2) {
+    animation-delay: -0.3s;
+    }
+    .lds-ring div:nth-child(3) {
+    animation-delay: -0.15s;
+    }
+    @keyframes lds-ring {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+    }
+
+    .loading{
+        opacity: 0.3;
+        //add a loading animation
+
+    }
 `;
 
 const PaymentForm = styled(AuthForm)`
@@ -130,6 +172,7 @@ const SelectBox = styled.select`
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
 
     text-indent: 1vw;
     width: 100%;
@@ -145,6 +188,17 @@ const SelectBox = styled.select`
     color: var(--color-bkg-inv-hard);
     font-size: var(--fontsize-input);
     font-weight: 300;
+    
+    option{
+        display: flex;
+        flex-direction: row;
+        color: #000000;
+        span{
+            margin-left: 20px;
+            //make italic
+            font-style: italic;
+        }
+    }
 
     ::placeholder {
         color: var(--color-bkg-inv-soft);
@@ -192,12 +246,15 @@ export default function Billing(props: any) {
     const [cpf, setCpf] = useState("");
     const [showPayment, setShowPayment] = useState(false);
     const [paymentMethod, setPaymentMethod] = useState("");
+    const [loadingGetOptions, setLoadingGetOptions] = useState(false);
+
     const userId = "43a39201-dd1a-4636-9485-592103dba08e"
     const [paymentOptions, setPaymentOptions] = useState([]);
     
 
     const handleInfoSubmit = (event: any) => {
         event.preventDefault();
+        setLoadingGetOptions(true);
         const url = `${process.env.REACT_APP_BASE_URL}/get-payment-options`;
         const header= {
             Authorization: process.env.REACT_APP_PASSWORD
@@ -205,17 +262,23 @@ export default function Billing(props: any) {
 
         const body = {
             "final_user_id": userId,
-            "purchase_amount": price as number,
+            "purchase_amount": Number(price),
             "down_payment": 0,
             "final_user_document": cpf
         }
 
         axios.post(url, body, {headers: header})
         .then((res) => {
-            console.log(res.data);
+            console.log(res.data.eligible_options)
+            setPaymentOptions(res.data.eligible_options);
+            setShowPayment(true)
         })
         .catch((err) => {
             console.log(err);
+            alert("Error getting payment options. Try again later.")
+        })
+        .finally(() => {
+            setLoadingGetOptions(false);
         })
     };
 
@@ -268,7 +331,9 @@ export default function Billing(props: any) {
                     onChange={(e) => setCpf(e.target.value)}
                 >
                 </InputBox>
-                <SendButton type="submit">Send Info</SendButton>
+                <SendButton
+                className={loadingGetOptions ? 'loading' : ''}
+                type="submit">{loadingGetOptions ? <div className="lds-ring"><div></div><div></div><div></div><div></div></div>  :"See Payment Options"}</SendButton>
             </AuthForm>
             <PaymentMethod>
                 <FormTitle>Payment Method</FormTitle>
@@ -298,9 +363,17 @@ export default function Billing(props: any) {
                 <SelectBox 
                     placeholder='Escolha em quantas vezes parcelar'
                 >
-                    <li>A vista</li>
-                    <li>1X</li>
-                    <li>2X</li>
+                    {paymentOptions.map((option: any, idx) => {
+                        
+                        const installments = option.number_splits;
+                        const installmentValue = option.monthly_payment;
+                        const totalValue = option.total_amount;
+
+
+                        return(
+                            <option key={idx} value={idx}>{`${installments} vezes de R$ ${Number(installmentValue).toFixed(2)}     `} <span>Total: R${Number(totalValue).toFixed(2)}</span> </option>
+                        );
+                    })}
                 </SelectBox>
                 <InputName>Chave Pix</InputName>
                 <InputBox 
