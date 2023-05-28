@@ -9,7 +9,7 @@ const Bkgdiv = styled.div`
     display: flex;
     flex-direction: column;
 
-    height: 300vh;
+    height: 160vh;
     padding-top: 5vh;
     width: 99vw;
 `;
@@ -239,9 +239,6 @@ export default function Dashboard() {
             <ScreenDiv>
                 <DashboardBox>
                     <PageTitle>Dashboard</PageTitle>
-                    <FiltersBar>
-                        <p>put filters here</p>
-                    </FiltersBar>
                     <InfoBar>
                         <InfoBox>
                             <InfoTitle>Average Ticket</InfoTitle>
