@@ -20,6 +20,7 @@ CORS(app)  # Allow CORS for all routes
 
 import os
 from supabase import create_client
+import math
 
 load_dotenv()
 
@@ -265,12 +266,12 @@ def create_payment():
         dynamics_brcodes = []
         if down_payment > 0:
             dynamics_brcodes.append(
-                starkbank.DynamicBrcode(amount=down_payment, tags=["down_payment"])
+                starkbank.DynamicBrcode(amount= math.floor(down_payment), tags=["down_payment"])
             )
         for i in range(number_splits):
             dynamics_brcodes.append(
                 starkbank.DynamicBrcode(
-                    amount=monthly_payment,
+                    amount=math.floor(monthly_payment),
                     expiration=due_dates_timestamp[i],
                     tags=["split_payment"],
                 )
