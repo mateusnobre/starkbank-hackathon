@@ -24,15 +24,6 @@ SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 
-import api_split_payments
-import api_clients
-import api_final_users
-import api_payment_transactions
-import starkbank
-import uuid
-from datetime import datetime
-from dateutil.relativedelta import relativedelta
-
 private_key_content = os.getenv("PRIVATE_KEY")
 
 user = starkbank.Project(
@@ -41,6 +32,15 @@ user = starkbank.Project(
     private_key=private_key_content
 )
 starkbank.user = user
+
+import api_split_payments
+import api_clients
+import api_final_users
+import api_payment_transactions
+import starkbank
+import uuid
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 
 
