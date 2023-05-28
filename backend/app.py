@@ -45,7 +45,7 @@ starkbank.user = user
 
 
 
-@app.route("/api/get-payment-options", methods=["GET"])
+@app.route("/api/get-payment-options", methods=["GET", "POST"])
 @authenticate
 def get_payment_options():
     data = request.get_json()

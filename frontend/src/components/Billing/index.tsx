@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import React, { useState, useRef, useEffect } from 'react';
+import axios from 'axios';
 
 const Billingdiv = styled.div`
     display: flex;
@@ -58,6 +59,11 @@ const MethodWrapper = styled.div`
             background-position: 0 100%;
             color: var(--color-bkg-soft);
         }
+    }
+
+    .selected{
+        background-position: 0 100%;
+        color: var(--color-bkg-soft);
     }
 `;
 
@@ -178,16 +184,43 @@ const SendButton = styled.button`
 `;
 
 
-export default function Billing() {
+export default function Billing(props: any) {
+    
+    const price = props.price;
 
     const [name, setName] = useState("");
+    const [cpf, setCpf] = useState("");
+    const [showPayment, setShowPayment] = useState(false);
+    const [paymentMethod, setPaymentMethod] = useState("");
+    const userId = "43a39201-dd1a-4636-9485-592103dba08e"
+    const [paymentOptions, setPaymentOptions] = useState([]);
+    
 
-    const handleInfoSubmit = () => {
-        console.log('form submitted ✅');
-        alert(`The name you entered was: ${name}`)
+    const handleInfoSubmit = (event: any) => {
+        event.preventDefault();
+        const url = `${process.env.REACT_APP_BASE_URL}/get-payment-options`;
+        const header= {
+            Authorization: process.env.REACT_APP_PASSWORD
+        }
+
+        const body = {
+            "final_user_id": userId,
+            "purchase_amount": price as number,
+            "down_payment": 0,
+            "final_user_document": cpf
+        }
+
+        axios.get(url, body, {headers: header})
+        .then((res) => {
+            console.log(res.data);
+        })
+        .catch((err) => {
+            console.log(err);
+        })
     };
 
-    const handlePaymentSubmit = () => {
+    const handlePaymentSubmit = (event: any) => {
+        event.preventDefault();
         console.log('form submitted ✅');
         alert(`The payment is done`)
     };
@@ -232,6 +265,7 @@ export default function Billing() {
                     type="number"
                     placeholder='XXXXX'
                     ref={numberInputRef}
+                    onChange={(e) => setCpf(e.target.value)}
                 >
                 </InputBox>
                 <SendButton type="submit">Send Info</SendButton>
@@ -239,12 +273,27 @@ export default function Billing() {
             <PaymentMethod>
                 <FormTitle>Payment Method</FormTitle>
                 <MethodWrapper>
-                    <button>PIX</button>
-                    <button>Credit Card</button>
-                    <button>Debt Card</button>
+                    <button  
+                    className={paymentMethod === 'PIX' ? 'selected' : ''}
+                    onClick={() => {
+                        paymentMethod === "PIX" ? setPaymentMethod("") : setPaymentMethod("PIX")
+                    }}
+                    >PIX</button>
+                    <button
+                    className={paymentMethod === 'Credit Card' ? 'selected' : ''}
+                    onClick={() => {
+                        paymentMethod === "Credit Card" ? setPaymentMethod("") : setPaymentMethod("Credit Card")
+                    }}
+                    >Credit Card</button>
+                    <button
+                    className={paymentMethod === 'Debt Card' ? 'selected' : ''}
+                    onClick={() => {
+                        paymentMethod === "Debt Card" ? setPaymentMethod("") : setPaymentMethod("Debt Card")
+                    }}
+                    >Debt Card</button>
                 </MethodWrapper>
             </PaymentMethod>
-            <PaymentForm onSubmit={handlePaymentSubmit}>
+            {showPayment && <PaymentForm onSubmit={handlePaymentSubmit}>
                 <InputName>Método</InputName>
                 <SelectBox 
                     placeholder='Escolha em quantas vezes parcelar'
@@ -260,7 +309,7 @@ export default function Billing() {
                 >
                 </InputBox>
                 <SendButton type="submit">Send Payment</SendButton>
-            </PaymentForm>
+            </PaymentForm>}
         </Billingdiv>
     );
 }

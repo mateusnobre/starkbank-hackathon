@@ -187,12 +187,13 @@ const PayWrapper = styled.div`
     }
 `;
 
-export default function Cart() {
+export default function Cart(props: any) {
 
     const history = useNavigate();
 
-    const [price, setPrice] = useState('');
-    const [display, setDisplay] = useState('');
+    const {price, setPrice} = props
+
+    const [display, setDisplay] = useState(0);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();

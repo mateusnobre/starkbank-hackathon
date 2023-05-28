@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import React from 'react';
+import React, { useState } from 'react';
 import Cart from '../../components/Cart';
 import Billing from '../../components/Billing';
 
@@ -56,13 +56,21 @@ const Footer = styled.div`
 `;
 
 export default function Checkout() {
+
+    const [price, setPrice] = useState('');
+
     return (
         <Bkgdiv>
             <CartWrapper>
-                <Cart/>
+                <Cart
+                price={price}
+                setPrice={setPrice}
+                />
             </CartWrapper>
             <BillingWrapper>
-                <Billing/>
+                <Billing
+                price={price}
+                />
             </BillingWrapper>
             <Footer>
                 <p>Powered by <span>Starkbank</span></p>
