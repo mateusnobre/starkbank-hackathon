@@ -9,6 +9,10 @@ from utils import (
     authenticate,
     get_credit_score,
 )
+import starkbank
+import uuid
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 from flask_cors import CORS
 app = Flask(__name__)
 CORS(app) # Allow CORS for all routes
@@ -37,13 +41,6 @@ import api_split_payments
 import api_clients
 import api_final_users
 import api_payment_transactions
-import starkbank
-import uuid
-from datetime import datetime
-from dateutil.relativedelta import relativedelta
-
-
-
 
 @app.route("/api/get-payment-options", methods=["GET"])
 @authenticate
