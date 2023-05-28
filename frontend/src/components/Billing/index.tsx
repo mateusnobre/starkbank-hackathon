@@ -258,6 +258,8 @@ export default function Billing(props: any) {
     const [downPayment, setDownPayment] = useState(0);
     const [monthlyPayment, setMonthlyPayment] = useState(0);
     const [numberSplits, setNumberSplits] = useState(0);
+
+    const [qrCodeLink, setQrCodeLink] = useState("");
     
 
     const handleInfoSubmit = (event: any) => {
@@ -271,7 +273,7 @@ export default function Billing(props: any) {
         const body = {
             "final_user_id": userId,
             "purchase_amount": Number(price),
-            "down_payment": Number(Number(initialDownPayment).toFixed(2)),
+            "down_payment": Number(initialDownPayment),
             "final_user_document": cpf
         }
 
@@ -307,7 +309,7 @@ export default function Billing(props: any) {
             "final_user_id": userId,
             "purchase_amount": Number(purchaseAmount),
             "number_splits": Number(numberSplits),
-            "down_payment": Number(Number(downPayment).toFixed(2)),
+            "down_payment": Number(downPayment),
             "monthly_payment": Number(monthlyPayment)
         }
 
@@ -315,7 +317,10 @@ export default function Billing(props: any) {
 
         axios.post(url, body, {headers: header})
         .then((res) => {
-            console.log(res);
+            if("qr_code_img_link" in res.data){
+                //redirect to qr code
+                window.open(res.data.qr_code_img_link)
+            }
         })
         .catch((err) => {
             console.log(err);
@@ -400,7 +405,7 @@ export default function Billing(props: any) {
                 <InputName>Método</InputName>
                 <SelectBox 
                     placeholder='Escolha em quantas vezes parcelar'
-                    value={paymentOptions[0]}
+                    
                     onChange={(e: any)=> {
                         setPurchaseAmount(paymentOptions[e.target.value]["purchase_amount"]);
                         setMonthlyPayment(paymentOptions[e.target.value]["monthly_payment"]);
@@ -424,6 +429,7 @@ export default function Billing(props: any) {
                 
                 <SendButton className={loadingPayment ? 'loading' : ''}
                 type="submit">{loadingPayment ? <div className="lds-ring"><div></div><div></div><div></div><div></div></div>  :"Approve Purchase"}</SendButton>
+
             </PaymentForm>}
         </Billingdiv>
     );
