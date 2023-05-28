@@ -8,28 +8,28 @@ interface DataRow {
 
 const data = [
     {
-      title: 'Page A',
-      director: 'Director A',
-      year: '2010',
+      title: 'Tyrion Lannister',
+      director: '+5999999',
+      year: '+9999998',
     },
     {
-      title: 'Page B',
-      director: 'Director B',
-      year: '2012',
+      title: 'Arnold Silva',
+      director: '+4000000',
+      year: '399999.50',
     }
   ];
 
 const columns: TableColumn<DataRow>[] = [
     {
-        name: 'Title',
+        name: 'Client',
         selector: row => row.title,
     },
     {
-        name: 'Director',
+        name: 'Amount',
         selector: row => row.director,
     },
     {
-        name: 'Year',
+        name: 'Balance',
         selector: row => row.year,
     },
 ];
