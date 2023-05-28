@@ -25,15 +25,15 @@ load_dotenv()
 
 SUPABASE_URL = os.environ.get("SUPABASE_URL")
 SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
+PRIVATE_KEY = os.environ.get("PRIVATE_KEY")
+
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-
-private_key_content = os.getenv("PRIVATE_KEY")
 
 user = starkbank.Project(
     environment="sandbox",
     id="6142453941796864",
-    private_key=private_key_content
+    private_key=PRIVATE_KEY
 )
 starkbank.user = user
 
