@@ -1,5 +1,9 @@
 from flask import request
-from utils import authenticate, check_required_columns_post, check_required_columns_update
+from utils import (
+    authenticate,
+    check_required_columns_post,
+    check_required_columns_update,
+)
 from app import app as app
 from app import supabase as supabase
 from faker import Faker

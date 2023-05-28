@@ -1,9 +1,14 @@
 from dotenv import load_dotenv
 from flask import request
-from utils import authenticate, check_required_columns_post, check_required_columns_update
+from utils import (
+    authenticate,
+    check_required_columns_post,
+    check_required_columns_update,
+)
 from app import app as app
 from app import supabase as supabase
 from faker import Faker
+
 
 def save_split_payments_to_database(splitted_payment):
     required_columns = [
@@ -13,7 +18,7 @@ def save_split_payments_to_database(splitted_payment):
         "payment_method",
         "final_user_id",
         "client_id",
-        "total_amount"
+        "total_amount",
     ]
     splitted_payment["split_payment_id"] = Faker().uuid4()
 
@@ -66,7 +71,7 @@ def create_split_payment():
         "payment_method",
         "final_user_id",
         "client_id",
-        "total_amount"
+        "total_amount",
     ]
     data["split_payment_id"] = Faker().uuid4()
 
@@ -78,7 +83,7 @@ def create_split_payment():
         result = supabase.table("SplitPayments").insert(data).execute()
         if not result:
             return "Failed to create split payment.", 500
-        return {"split_payment_id" : data["split_payment_id"]}, 201
+        return {"split_payment_id": data["split_payment_id"]}, 201
     except Exception as e:
         return str(e), 500
 
@@ -98,7 +103,12 @@ def get_single_split_payment(id):
     - 500 if there's an error during the retrieval process
     """
     try:
-        result = supabase.table("SplitPayments").select("*").eq("split_payment_id", id).execute()
+        result = (
+            supabase.table("SplitPayments")
+            .select("*")
+            .eq("split_payment_id", id)
+            .execute()
+        )
         if not result:
             return "Failed to retrieve split payment.", 500
         if len(result.data) == 0:
@@ -123,7 +133,12 @@ def delete_single_split_payment(id):
     - 500 if there's an error during the deletion process
     """
     try:
-        result = supabase.table("SplitPayments").delete().eq("split_payment_id", id).execute()
+        result = (
+            supabase.table("SplitPayments")
+            .delete()
+            .eq("split_payment_id", id)
+            .execute()
+        )
         if not result:
             return "Failed to delete split payment.", 500
         if result.count == 0:
@@ -179,7 +194,12 @@ def update_single_split_payment(id):
         return update_columns, 400
 
     try:
-        result = supabase.table("SplitPayments").update(data).eq("split_payment_id", id).execute()
+        result = (
+            supabase.table("SplitPayments")
+            .update(data)
+            .eq("split_payment_id", id)
+            .execute()
+        )
         if not result:
             return "Failed to update split payment.", 500
         if result.count == 0:

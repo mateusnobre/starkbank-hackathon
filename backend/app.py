@@ -14,8 +14,9 @@ import uuid
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from flask_cors import CORS
+
 app = Flask(__name__)
-CORS(app) # Allow CORS for all routes
+CORS(app)  # Allow CORS for all routes
 
 import os
 from supabase import create_client
@@ -31,9 +32,7 @@ supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 
 user = starkbank.Project(
-    environment="sandbox",
-    id="6142453941796864",
-    private_key=PRIVATE_KEY
+    environment="sandbox", id="6142453941796864", private_key=PRIVATE_KEY
 )
 starkbank.user = user
 
@@ -41,6 +40,7 @@ import api_split_payments
 import api_clients
 import api_final_users
 import api_payment_transactions
+
 
 @app.route("/api/get-payment-options", methods=["GET"])
 @authenticate
@@ -175,6 +175,7 @@ def process_payment():
 
     return jsonify({"message": "Payment processed successfully."}), 200
 
+
 @app.route("/api/create-payment", methods=["POST"])
 @authenticate
 def create_payment():
@@ -186,64 +187,68 @@ def create_payment():
         down_payment = data.get("down_payment")
         interest_rate = data.get("interest_rate")
         monthly_payment = data.get("monthly_payment")
-        
+
         if final_user_id is None or purchase_amount is None or number_splits is None:
             return jsonify({"error": "Missing required fields."}), 400
-        
-        if interest_rate is not None and monthly_payment is not  None:
+
+        if interest_rate is not None and monthly_payment is not None:
             return jsonify({"error": "You must choose only one method"}), 400
-        
+
         if type(number_splits) != int or number_splits < 0:
             return jsonify({"error": "Invalid number of splits."}), 400
 
         future_payment = purchase_amount
 
-        
         if down_payment is not None:
             future_payment -= down_payment
         else:
             down_payment = 0
-        
+
         if interest_rate is not None:
-            monthly_payment = (future_payment / number_splits) * (1 + interest_rate) ** number_splits
-        
+            monthly_payment = (future_payment / number_splits) * (
+                1 + interest_rate
+            ) ** number_splits
+
         future_payment = monthly_payment * number_splits
 
         if interest_rate is None:
-            #get interest rate from monthly payment and future payment
-            interest_rate = ((future_payment + down_payment)/purchase_amount) ** (1/number_splits) - 1
-        
+            # get interest rate from monthly payment and future payment
+            interest_rate = ((future_payment + down_payment) / purchase_amount) ** (
+                1 / number_splits
+            ) - 1
+
         if not isinstance(future_payment, (int, float)) or future_payment < 0:
             return jsonify({"error": "Invalid future payment."}), 400
 
-        if monthly_payment is not None and monthly_payment * number_splits != future_payment:
+        if (
+            monthly_payment is not None
+            and monthly_payment * number_splits != future_payment
+        ):
             return jsonify({"error": "Invalid monthly payment."}), 400
-        
 
-        
-        due_dates = [datetime.now() + relativedelta(months=i) for i in range(1, number_splits + 1)]
+        due_dates = [
+            datetime.now() + relativedelta(months=i)
+            for i in range(1, number_splits + 1)
+        ]
         due_dates_str = [date.strftime("%Y-%m-%d") for date in due_dates]
         due_dates_timestamp = [int(datetime.timestamp(date)) for date in due_dates]
 
         dynamics_brcodes = []
-        
+
         if down_payment > 0:
             dynamics_brcodes.append(
-                starkbank.DynamicBrcode(
-                    amount=down_payment,
-                    tags=['down_payment']
-                )
+                starkbank.DynamicBrcode(amount=down_payment, tags=["down_payment"])
             )
-        
+
         for i in range(number_splits):
             dynamics_brcodes.append(
                 starkbank.DynamicBrcode(
                     amount=monthly_payment,
                     expiration=due_dates_timestamp[i],
-                    tags=['split_payment']
+                    tags=["split_payment"],
                 )
             )
-        
+
         splited_payment = {
             "final_user_id": final_user_id,
             "original_amount": purchase_amount,
@@ -251,18 +256,17 @@ def create_payment():
             "status": "pending",
             "payment_method": "pix_brcode",
             "client_id": "dc8a9c41-1bbd-48c9-b57d-24438e940d1a",
-            "total_amount": future_payment+ down_payment,
+            "total_amount": future_payment + down_payment,
         }
 
         split_id = api_split_payments.save_split_payments_to_database(splited_payment)
         if type(split_id) == bool and not split_id:
             return jsonify({"error": "Error creating payment."}), 500
-        
 
         brcodes = starkbank.dynamicbrcode.create(dynamics_brcodes)
         if brcodes is None or len(brcodes) < 1:
             return jsonify({"error": "Error creating payment."}), 500
-        
+
         transaction_down_id = None
         start_split = 0
 
@@ -273,23 +277,27 @@ def create_payment():
                 "status": "pending",
                 "transaction_date": None,
                 "payment_method": "pix_brcode",
-                "client_id":  "dc8a9c41-1bbd-48c9-b57d-24438e940d1a",
+                "client_id": "dc8a9c41-1bbd-48c9-b57d-24438e940d1a",
                 "final_user_id": final_user_id,
                 "type": "down_payment",
                 "due_date": None,
                 "qr_code_copy": brcodes[0].id,
                 "qr_code_img_link": brcodes[0].picture_url,
-                "stark_uuid": brcodes[0].uuid
+                "stark_uuid": brcodes[0].uuid,
             }
-            transaction_down_id = api_payment_transactions.save_payment_transaction_to_database(transaction_down)
-            
+            transaction_down_id = (
+                api_payment_transactions.save_payment_transaction_to_database(
+                    transaction_down
+                )
+            )
+
             if type(transaction_down_id) == bool and not transaction_down_id:
                 return jsonify({"error": "Error creating payment."}), 500
-            
+
             start_split = 1
-        
+
         print(len(brcodes))
-        
+
         for i in range(start_split, len(brcodes)):
             print(i)
             print(brcodes[i])
@@ -299,41 +307,55 @@ def create_payment():
                 "status": "pending",
                 "transaction_date": None,
                 "payment_method": "pix_brcode",
-                "client_id":  "dc8a9c41-1bbd-48c9-b57d-24438e940d1a",
+                "client_id": "dc8a9c41-1bbd-48c9-b57d-24438e940d1a",
                 "final_user_id": final_user_id,
                 "type": "split_payment",
-                "due_date": due_dates_str[i-1 if down_payment > 0 else i],
+                "due_date": due_dates_str[i - 1 if down_payment > 0 else i],
                 "qr_code_copy": brcodes[i].id,
                 "qr_code_img_link": brcodes[i].picture_url,
-                "stark_uuid": brcodes[i].uuid
+                "stark_uuid": brcodes[i].uuid,
             }
-            
-            transaction_id = api_payment_transactions.save_payment_transaction_to_database(transaction)
+
+            transaction_id = (
+                api_payment_transactions.save_payment_transaction_to_database(
+                    transaction
+                )
+            )
             if type(transaction_id) == bool and not transaction_id:
                 return jsonify({"error": "Error creating payment."}), 500
-    
+
         if down_payment > 0:
-            qr_code_copy =  brcodes[0].id
+            qr_code_copy = brcodes[0].id
             qr_code_img_link = brcodes[0].picture_url
 
-            return jsonify({
-                "message": "Payment created successfully",
-                "qr_code_copy": qr_code_copy,
-                "qr_code_img_link": qr_code_img_link,
-                "due_dates": due_dates_str[1:] if len(due_dates_str) > 1 else [],
-                "monthly_payment": monthly_payment,
-            }), 200
+            return (
+                jsonify(
+                    {
+                        "message": "Payment created successfully",
+                        "qr_code_copy": qr_code_copy,
+                        "qr_code_img_link": qr_code_img_link,
+                        "due_dates": due_dates_str[1:]
+                        if len(due_dates_str) > 1
+                        else [],
+                        "monthly_payment": monthly_payment,
+                    }
+                ),
+                200,
+            )
 
-        return jsonify({
-                "message": "Payment created successfully",
-                "due_dates": due_dates_str[1:] if len(due_dates_str) > 1 else [],
-                "monthly_payment": monthly_payment,
-            }), 200
+        return (
+            jsonify(
+                {
+                    "message": "Payment created successfully",
+                    "due_dates": due_dates_str[1:] if len(due_dates_str) > 1 else [],
+                    "monthly_payment": monthly_payment,
+                }
+            ),
+            200,
+        )
     except Exception as e:
         print(e)
         return jsonify({"error": "Error creating payment."}), 500
-
-
 
 
 if __name__ == "__main__":
