@@ -210,7 +210,7 @@ export default function Billing(props: any) {
             "final_user_document": cpf
         }
 
-        axios.get(url, body, {headers: header})
+        axios.post(url, body, {headers: header})
         .then((res) => {
             console.log(res.data);
         })
